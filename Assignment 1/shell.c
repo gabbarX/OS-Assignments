@@ -108,6 +108,7 @@ void cd(char *input[],int size)
     bool cdP = false;
     bool cdL = false;
     bool cdHelp = false;
+    bool noparams = false;
 
     if(strcmp(input[1],"-P")){
         cdP = true;
@@ -118,8 +119,19 @@ void cd(char *input[],int size)
     if(strcmp(input[1],"--help")){
         cdHelp = true;
     }
+    else{
+        noparams = true;
+    }
 
-    
+    if(noparams && size<2){
+        int flg = chdir(getenv("HOME"));
+        if(flg){
+            printf("\nyou are at home");
+        }
+        else{
+            printf("err");
+        }
+    }
 
 }
 
@@ -192,24 +204,26 @@ int main(){
         }
         else if (strcmp(input[0], "cd") == 0)
         {
-            char *cd = strtok(input[0], " ");
-            cd = strtok(NULL, " ");
-            if (cd == NULL)
-            {
-                printf("Please enter a directory\n");
-            }
-            else if (strcmp(cd, "..") == 0)
-            {
-                chdir("..");
-            }
-            else if (strcmp(cd, ".") == 0)
-            {
-                chdir(".");
-            }
-            else
-            {
-                chdir(cd);
-            }
+            // char *cd = strtok(input[0], " ");
+            // cd = strtok(NULL, " ");
+            // if (cd == NULL)
+            // {
+            //     printf("Please enter a directory\n");
+            // }
+            // else if (strcmp(cd, "..") == 0)
+            // {
+            //     chdir("..");
+            // }
+            // else if (strcmp(cd, ".") == 0)
+            // {
+            //     chdir(".");
+            // }
+            // else
+            // {
+            //     chdir(cd);
+            // }
+            cd(input,size);
+        
         }
         else
         {
