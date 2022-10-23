@@ -90,7 +90,7 @@ void pwd(char *input[], int size)
     }
     else if (strcmp(input[1], "-L"))
     {
-        char buf[1024];
+        char buf[PATH_MAX];
         char newarr[1024];
         char *res = realpath(newarr, buf);
         char *cwd2 = getcwd(newarr, sizeof(newarr));
@@ -103,36 +103,53 @@ void pwd(char *input[], int size)
 }
 
 
-void cd(char *input[],int size)
-{
+void cdCommand(char *input[],int size)
+{   
+    // printf("cd nahi challa bc function hu");
     bool cdP = false;
     bool cdL = false;
     bool cdHelp = false;
-    bool noparams = false;
-
-    if(strcmp(input[1],"-P")){
-        cdP = true;
-    }
-    if(strcmp(input[1],"-L")){
-        cdL = true;
-    }
-    if(strcmp(input[1],"--help")){
-        cdHelp = true;
-    }
-    else{
-        noparams = true;
-    }
-
-    if(noparams && size<2){
-        int flg = chdir(getenv("HOME"));
-        if(flg){
-            printf("\nyou are at home");
+    // bool noparams = false;
+    // printf("%b",noparams);
+    if(size>1){
+        
+        if(strcmp(input[1],"-P")==0){
+            cdP = true;
+        }
+        if(strcmp(input[1],"-L")==0){
+            cdL = true;
+        }
+        if(strcmp(input[1],"--help")==0){
+            cdHelp = true;
+        }
+        if(strcmp(input[1], "..")){
+            chdir("..");
         }
         else{
-            printf("err");
+            printf("INvalid option");
         }
     }
+    else {
+        int flg = chdir(getenv("HOME"));
+        if(flg){
+            printf("ERROR");
+        }
+        else {
+            char cwd2[1000];
+            getcwd(cwd2, 1000);
+            printf("%s\n",cwd2);
+        }
+    }
+    if(cdHelp){
+        printf("cd : [-L || -P][dir]\n");
+        printf("Change the current directory to DIR. The default DIR is the value of the HOME shell variable.\n");
+    }   
+    if(cdL){
+        
+    }
+    if(cdP){
 
+    }
 }
 
 
@@ -222,8 +239,8 @@ int main(){
             // {
             //     chdir(cd);
             // }
-            cd(input,size);
-        
+            cdCommand(input,size);
+            // printf("cd nai challa mc!");
         }
         else
         {
