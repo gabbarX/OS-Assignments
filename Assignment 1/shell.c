@@ -4,6 +4,21 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdbool.h>
+#define clear() printf("\033[H\033[J")
+
+void init_shell()
+{
+    clear();
+    printf("\n\n\n\n******************"
+        "************************");
+    printf("\n\n\n\t****MY SHELL****");
+    printf("\n\n\t-USE AT YOUR OWN RISK-");
+    printf("\n\n\n\n*******************"
+        "***********************");
+    char* username = getenv("USER");
+    printf("\n\n\nUSER is: @%s", username);
+    printf("\n");
+}
 
 void echo(char *input[], int size)
 {
@@ -67,25 +82,48 @@ void pwd(char *input[], int size)
         printf("Print the name of the current working directory.\n");
         printf("  --help\tdisplay this help and exit\n");
     }
-    else if (strcmp(input[1], "-P")
+    else if (strcmp(input[1], "-P"))
     {
         char newarr[1024];
         char *cwd2 = getcwd(newarr, sizeof(newarr));
-        printf("%s", cwd2);
+        printf("%s\n", cwd2);
     }
-    else if (strcmp(input[1], "-L")
+    else if (strcmp(input[1], "-L"))
     {
         char buf[PATH_MAX];
         char newarr[1024];
         char *res = realpath(newarr, buf);
         char *cwd2 = getcwd(newarr, sizeof(newarr));
-        printf("%s", cwd2);
+        printf("%s\n", cwd2);
     }
     else{
         printf("pwd: invalid option -- '%s'\n", input[1]);
         printf("Try 'pwd --help' for more information.\n");
     }
 }
+
+
+void cd(char *input[],int size)
+{
+    bool cdP = false;
+    bool cdL = false;
+    bool cdHelp = false;
+
+    if(strcmp(input[1],"-P")){
+        cdP = true;
+    }
+    if(strcmp(input[1],"-L")){
+        cdL = true;
+    }
+    if(strcmp(input[1],"--help")){
+        cdHelp = true;
+    }
+
+    
+
+}
+
+
 
 // void echon(char **input_array, int size)
 // {
@@ -116,6 +154,7 @@ void pwd(char *input[], int size)
 
 int main(){
     printf("Welcome to the shell\n");
+    init_shell();
     
     while (true)
     {
