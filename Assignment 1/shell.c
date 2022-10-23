@@ -90,7 +90,7 @@ void pwd(char *input[], int size)
     }
     else if (strcmp(input[1], "-L"))
     {
-        char buf[PATH_MAX];
+        char buf[1024];
         char newarr[1024];
         char *res = realpath(newarr, buf);
         char *cwd2 = getcwd(newarr, sizeof(newarr));
