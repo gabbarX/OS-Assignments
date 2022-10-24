@@ -1,3 +1,5 @@
+#include <asm-generic/errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -8,6 +10,7 @@ int main(int argc, char *argv[])
 {
     char command[100] = "";
     char flags[100] = "";
+    bool didRun = false;
     char *token = strtok(argv[1], " ");
     strcpy(command, token);
     token = strtok(NULL, " ");
@@ -16,9 +19,13 @@ int main(int argc, char *argv[])
         strcpy(flags, token);
         token = strtok(NULL, " ");
     }
+    if(token==NULL){
+        printf("rm : missing operand\n");
+    }
     
     while (token != NULL)
-    {
+    {   
+        didRun = true;
         char toRm[1000] = "";
         strcpy(toRm, token);
         if (flags[0] == '\0')

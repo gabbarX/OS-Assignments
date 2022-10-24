@@ -9,41 +9,41 @@
 #include <pwd.h>
 #include <grp.h>
 
-void printLs(char argument[1000])
+void lsCommand(char argument[1000])
 {
-    struct dirent **names;
+    struct dirent **nameList;
     int n;
     if (strlen(argument) == 0)
     {
-        n = scandir(".", &names, NULL, alphasort);
+        n = scandir(".", &nameList, NULL, alphasort);
     }
     else
     {
-        n = scandir(argument, &names, NULL, alphasort);
+        n = scandir(argument, &nameList, NULL, alphasort);
     }
-    int i = 0;
+    int itr = 0;
     if (n < 0)
     {
         perror("scandir");
     }
     else
     {
-        while (i < n)
+        while (itr < n)
         {
-            if (names[i]->d_name[0] == '.')
+            if (nameList[itr]->d_name[0] == '.')
             {
-                free(names[i++]);
+                free(nameList[itr++]);
                 continue;
             }
-            printf("%s ", names[i]->d_name);
-            free(names[i++]);
+            printf("%s ", nameList[itr]->d_name);
+            free(nameList[itr++]);
         }
         printf("\n");
-        free(names);
+        free(nameList);
     }
 }
 
-void printLsA(char argument[1000])
+void lsAcommand(char argument[1000])
 {
     struct dirent **names;
     int n;
@@ -72,7 +72,7 @@ void printLsA(char argument[1000])
     }
 }
 
-void printLsL(char argument[1000])
+void lsLcommand(char argument[1000])
 {
     DIR *thedirectory;
     struct dirent *thefile;
@@ -167,19 +167,19 @@ int main(int argc, char *argv[])
     }
     if (flags[0] == '\0')
     {
-        printLs(argument);
+        lsCommand(argument);
     }
     else if (flags[1] == 'a')
     {
-        printLsA(argument);
+        lsAcommand(argument);
     }
     else if (flags[1] == 'l')
     {
-        printLsL(argument);
+        lsLcommand(argument);
     }
     else
     {
-        printf("Invalid Input -- %s\n", flags);
+        printf("ls: invalid input -- %s\n", flags);
         return 1;
     }
     return 0;

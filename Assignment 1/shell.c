@@ -363,6 +363,7 @@ int main(){
     {
         char rawCommand[100];
         char commandCopy[100];
+        bool isThreadBased=false;
         printf(">> ");
         scanf("%[^\n]%*c", rawCommand);
         strcpy(commandCopy, rawCommand);
@@ -380,122 +381,143 @@ int main(){
             token = strtok(NULL, " ");
             size++;
         }
+        
+        for(int i=0;i<size;i++){
+            if(!strcmp(input[i], "&t")){
+                isThreadBased = true;
+            }
+        }
 
-        if (!strcmp(input[0], "exit"))
-        {
-            printf("Exiting the shell\n");
-            break;
+        if(isThreadBased && !strcmp(input[0], "rm")){
+            printf("Thread based");
         }
-        else if(!strcmp(input[0], "pwd")){
-            pwd(input, size);
-        }
-        else if (!strcmp(input[0], "echo"))
-        {
-            echo(input,size);
-        }
-        else if (!strcmp(input[0], "cd"))
-        {
-            // char *cd = strtok(input[0], " ");
-            // cd = strtok(NULL, " ");
-            // if (cd == NULL)
-            // {
-            //     printf("Please enter a directory\n");
-            // }
-            // else if (strcmp(cd, "..") == 0)
-            // {
-            //     chdir("..");
-            // }
-            // else if (strcmp(cd, ".") == 0)
-            // {
-            //     chdir(".");
-            // }
-            // else
-            // {
-            //     chdir(cd);
-            // }
-            // cdCommand(input,size);
-            // // printf("cd nai challa mc!");
-            cd(input);
-        }
-        else if(!strcmp(input[0], "date")){
-        pid_t id;
-        int status;
-        if ((id = fork()) == 0)
-        {
-            char *args[] = {"./date", commandCopy, NULL};
-            execvp("./date", args);
-            exit(0);
-        }
-        else
-        {
-            pid_t time;
-            time = wait(&status);
-        }
-        }
-        else if (!strcmp(input[0], "cat")) {
+        else {
+            if (!strcmp(input[0], "exit"))
+            {
+                printf("Exiting the shell\n");
+                break;
+            }
+            else if(!strcmp(input[0], "pwd")){
+                pwd(input, size);
+            }
+            else if (!strcmp(input[0], "echo"))
+            {
+                echo(input,size);
+            }
+            else if (!strcmp(input[0], "cd"))
+            {
+                // char *cd = strtok(input[0], " ");
+                // cd = strtok(NULL, " ");
+                // if (cd == NULL)
+                // {
+                //     printf("Please enter a directory\n");
+                // }
+                // else if (strcmp(cd, "..") == 0)
+                // {
+                //     chdir("..");
+                // }
+                // else if (strcmp(cd, ".") == 0)
+                // {
+                //     chdir(".");
+                // }
+                // else
+                // {
+                //     chdir(cd);
+                // }
+                // cdCommand(input,size);
+                // // printf("cd nai challa mc!");
+                cd(input);
+            }
+            else if(!strcmp(input[0], "date")){
             pid_t id;
-            int stat;
+            int status;
             if ((id = fork()) == 0)
             {
-                char *args[] = {"./cat", commandCopy, NULL};
+                char *args[] = {"./date", commandCopy, NULL};
                 execvp("./date", args);
                 exit(0);
             }
             else
             {
                 pid_t time;
-                time = wait(&stat);
+                time = wait(&status);
             }
-        }
-        else if (!strcmp(input[0], "ls")) {
-            pid_t id;
-            int stat;
-            if ((id = fork()) == 0)
-            {
-                char *args[] = {"./ls", commandCopy, NULL};
-                execvp("./ls", args);
-                exit(0);
+            }
+            else if (!strcmp(input[0], "cat")) {
+                pid_t id;
+                int stat;
+                if ((id = fork()) == 0)
+                {
+                    char *args[] = {"./cat", commandCopy, NULL};
+                    execvp("./date", args);
+                    exit(0);
+                }
+                else
+                {
+                    pid_t time;
+                    time = wait(&stat);
+                }
+            }
+            else if (!strcmp(input[0], "ls")) {
+                pid_t id;
+                int stat;
+                if ((id = fork()) == 0)
+                {
+                    char *args[] = {"./ls", commandCopy, NULL};
+                    execvp("./ls", args);
+                    exit(0);
+                }
+                else
+                {
+                    pid_t time;
+                    time = wait(&stat);
+                }
+            }
+            else if (!strcmp(input[0],"mkdir")) {
+                pid_t id;
+                int stat;
+                if ((id = fork()) == 0)
+                {
+                    char *args[] = {"./mkdir", commandCopy, NULL};
+                    execvp("./mkdir", args);
+                    exit(0);
+                }
+                else
+                {
+                    pid_t time;
+                    time = wait(&stat);
+                }
+            }
+            else if (!strcmp(input[0],"rm")) {
+                pid_t id;
+                int stat;
+                if (input[1]==NULL){
+                    printf("rm : missing operand\n");
+                }
+                else {
+                    if ((id = fork()) == 0)
+                    {
+                        char *args[] = {"./rm", commandCopy, NULL};
+                        execvp("./rm", args);
+                        exit(0);
+                    }
+                    else
+                    {
+                        pid_t time;
+                        time = wait(&stat);
+                    }
+                }
             }
             else
             {
-                pid_t time;
-                time = wait(&stat);
+                printf("Command not found\n");
             }
+        
+
+
         }
-        else if (!strcmp(input[0],"mkdir")) {
-            pid_t id;
-            int stat;
-            if ((id = fork()) == 0)
-            {
-                char *args[] = {"./mkdir", commandCopy, NULL};
-                execvp("./mkdir", args);
-                exit(0);
-            }
-            else
-            {
-                pid_t time;
-                time = wait(&stat);
-            }
-        }
-        else if (!strcmp(input[0],"rm")) {
-            pid_t id;
-            int stat;
-            if ((id = fork()) == 0)
-            {
-                char *args[] = {"./rm", commandCopy, NULL};
-                execvp("./rm", args);
-                exit(0);
-            }
-            else
-            {
-                pid_t time;
-                time = wait(&stat);
-            }
-        }
-        else
-        {
-            printf("Command not found\n");
-        }
+
+
     }
     
 }
