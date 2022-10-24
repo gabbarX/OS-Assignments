@@ -1,3 +1,4 @@
+#include <linux/limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -178,7 +179,7 @@ void cd(char **input)
     }
     else if (isCdP == true)
     {
-        char cwd[1024];
+        char cwd[PATH_MAX];
         if (input[2] != NULL)
         {
 
@@ -235,9 +236,9 @@ void cd(char **input)
         }
         else
         {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
+            char cwd2[200];
+            char *newdir = getcwd(cwd2, sizeof(cwd2));
+            printf("%s", newdir);
         }
     }
     else
@@ -258,10 +259,10 @@ void cd(char **input)
     else
     {
         char *pt = strtok(cwd_inputnew1, "\n");
-        int value = chdir(pt);
-        if (value != 0)
+        bool check = chdir(pt);
+        if (check == true)
         {
-            perror("Error in commands - ");
+            perror("An error occured in: ");
         }
         else
         {
@@ -357,7 +358,7 @@ int main(){
             }
             else if(!strcmp(input[0], "date")){
             pid_t id;
-            int status;
+            int statusus;
             if ((id = fork()) == 0)
             {
                 char *args[] = {"./date", commandCopy, NULL};
@@ -367,12 +368,12 @@ int main(){
             else
             {
                 pid_t time;
-                time = wait(&status);
+                time = wait(&statusus);
             }
             }
             else if (!strcmp(input[0], "cat")) {
                 pid_t id;
-                int stat;
+                int status;
                 if ((id = fork()) == 0)
                 {
                     char *args[] = {"./cat", commandCopy, NULL};
@@ -382,12 +383,12 @@ int main(){
                 else
                 {
                     pid_t time;
-                    time = wait(&stat);
+                    time = wait(&status);
                 }
             }
             else if (!strcmp(input[0], "ls")) {
                 pid_t id;
-                int stat;
+                int statusus;
                 if ((id = fork()) == 0)
                 {
                     char *args[] = {"./ls", commandCopy, NULL};
@@ -397,12 +398,12 @@ int main(){
                 else
                 {
                     pid_t time;
-                    time = wait(&stat);
+                    time = wait(&statusus);
                 }
             }
             else if (!strcmp(input[0],"mkdir")) {
                 pid_t id;
-                int stat;
+                int status;
                 if ((id = fork()) == 0)
                 {
                     char *args[] = {"./mkdir", commandCopy, NULL};
@@ -412,12 +413,12 @@ int main(){
                 else
                 {
                     pid_t time;
-                    time = wait(&stat);
+                    time = wait(&status);
                 }
             }
             else if (!strcmp(input[0],"rm")) {
                 pid_t id;
-                int stat;
+                int status;
                 if (input[1]==NULL){
                     printf("rm : missing operand\n");
                 }
@@ -431,7 +432,7 @@ int main(){
                     else
                     {
                         pid_t time;
-                        time = wait(&stat);
+                        time = wait(&status);
                     }
                 }
             }
