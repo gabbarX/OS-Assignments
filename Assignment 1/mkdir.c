@@ -6,104 +6,90 @@
 #include <errno.h>
 #include <string.h>
 
-void makeDir(char fileName[1000])
-{
-    int check = mkdir(fileName, 0777);
-    if (check == -1)
-    {
-        perror(fileName);
-    }
-}
-
-void makeDirV(char fileName[1000])
-{
-    int check = mkdir(fileName, 0777);
-    if (check == -1)
-    {
-        perror(fileName);
-    }
-    else
-    {
-        printf("mkdir: created directory '%s'\n", fileName);
-    }
-}
-
-void makeDirM(char fileName[1000], int mode)
-{
-    int check = mkdir(fileName, mode);
-    if (check == -1)
-    {
-        perror(fileName);
-    }
-}
-
 int main(int argc, char *argv[])
 {
-    char commandName[10] = "";
-    char flag[10] = "";
+    char command[100] = "";
+    char flags[100] = "";
     char *token = strtok(argv[1], " ");
-    strcpy(commandName, token);
+    strcpy(command, token);
     token = strtok(NULL, " ");
     if (token[0] == '-')
     {
-        strcpy(flag, token);
+        strcpy(flags, token);
         token = strtok(NULL, " ");
     }
     while (token != NULL)
     {
-        char fileName[1000] = "";
-        strcpy(fileName, token);
-        if (flag[0] == '\0')
+        char toMk[1000] = "";
+        strcpy(toMk, token);
+        if (flags[0] == '\0')
         {
-            makeDir(fileName);
+            if(mkdir(toMk, 0777) == -1)
+            {
+                perror(toMk);
+            }
         }
         else
         {
-            if (flag[1] == 'v')
+            if (flags[1] == 'v')
             {
-                makeDirV(fileName);
-            }
-            else if (flag[1] == 'm' && flag[2] == '=')
-            {
-                if (strlen(flag) < 6)
+                if (mkdir(toMk, 0777) == -1)
                 {
-                    printf("Invalid Input -- %s\n", flag);
-                    return 1;
-                }
-                if (strlen(flag) == 7)
-                {
-                    char modeStr[5];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        modeStr[i] = flag[i + 3];
-                    }
-                    int mode = atoi(modeStr);
-                    if (mode != 400 && mode != 777 && mode != 100 && mode != 200)
-                    {
-                        printf("Invalid mode '%d' entered \n", mode);
-                        return 1;
-                    }
-                    makeDirM(fileName, mode);
+                    perror(toMk);
                 }
                 else
                 {
-                    char modeStr[4];
-                    for (int i = 0; i < 3; i++)
+                    printf("mkdir: directory '%s' successfully created!\n", toMk);
+                }
+            }
+            else if (flags[1] == 'm' && flags[2] == '=')
+            {
+                if (strlen(flags) < 6)
+                {
+                    printf("Invalid Input -- %s\n", flags);
+                    return 1;
+                }
+                if (strlen(flags) == 7)
+                {
+                    //temp string to store mode as string for later conversion into integer.
+                    char temp[5];
+                    for (int i = 0; i < 4; i++)
                     {
-                        modeStr[i] = flag[i + 3];
+                        temp[i] = flags[i + 3];
                     }
-                    int mode = atoi(modeStr);
+                    int mode = atoi(temp);
                     if (mode != 400 && mode != 777 && mode != 100 && mode != 200)
                     {
                         printf("Invalid mode '%d' entered \n", mode);
                         return 1;
                     }
-                    makeDirM(fileName, mode);
+                    if (mkdir(toMk, mode) == -1)
+                    {
+                        perror(toMk);
+                    }
+                }
+                else
+                {
+                    char temp[4];
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp[i] = flags[i + 3];
+                    }
+                    int mode = atoi(temp);
+                    if (mode != 400 && mode != 777 && mode != 100 && mode != 200)
+                    {
+                        printf("Invalid mode '%d' entered \n", mode);
+                        return 1;
+                    }
+                    if (mkdir(toMk, mode) == -1)
+                    {
+                        perror(toMk);
+                    }
                 }
             }
             else
             {
-                printf("Invalid Input -- %s\n", flag);
+                printf("mkdir : invalid input -- %s\n", flags);
                 return 1;
             }
         }
