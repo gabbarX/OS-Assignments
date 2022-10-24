@@ -102,6 +102,178 @@ void pwd(char *input[], int size)
     }
 }
 
+void cd(char **input_array)
+{
+    int flaggers1 = INT_MAX;
+    int flaggers2 = INT_MAX;
+    int flaggers3 = INT_MAX;
+    int flaggers4 = INT_MAX;
+    int flaggers5 = INT_MAX;
+    int flaggers6 = INT_MAX;
+    int flaggers7 = INT_MAX;
+
+    char cwd_inputnew1[1024];
+
+    if (input_array[1] != NULL)
+    {
+
+        strcpy(cwd_inputnew1, input_array[1]);
+        flaggers1 = strcmp(cwd_inputnew1, "~");
+        flaggers2 = strcmp(cwd_inputnew1, "--");
+        flaggers3 = strcmp(cwd_inputnew1, "-");
+        flaggers4 = strcmp(cwd_inputnew1, "-P");
+        flaggers5 = strcmp(cwd_inputnew1, "-L");
+        flaggers6 = strcmp(cwd_inputnew1, "--help");
+    }
+    else
+    {
+        flaggers7 = 0;
+    }
+    
+    if (flaggers3 == 0)
+    {
+        int flag3 = chdir("..");
+        if (flag3 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd2[200];
+            char *cwd32 = getcwd(cwd2, sizeof(cwd2));
+            printf("%s", cwd32);
+        }
+    }
+    else if (flaggers1 == 0 || flaggers2 == 0 || flaggers7 == 0)
+    {
+        int flag127 = chdir(getenv("HOME"));
+        if (flag127 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+
+    else if (flaggers6 == 0)
+    {
+        printf("%s", "this command is used to change the directory to given input");
+    }
+    else if (flaggers4 == 0)
+    {
+        cdP(input_array);
+    }
+    else if (flaggers5 == 0)
+    {
+        cdL(input_array);
+    }
+    else
+    {
+        char *pt = strtok(cwd_inputnew1, "\n");
+        int value = chdir(pt);
+        if (value != 0)
+        {
+            perror("Error in commands - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+}
+
+
+void cdP(char **input_array)
+{
+    char cwd_inputnew2[1024];
+
+    if (input_array[2] != NULL)
+    {
+
+        strcpy(cwd_inputnew2, input_array[2]);
+        char *pt = strtok(cwd_inputnew2, "\n");
+        char buf[PATH_MAX];
+        char *res = realpath(pt, buf);
+        if (!res)
+        {
+            perror("realpath error:");
+        }
+        else
+        {
+            int value23 = chdir(res);
+            printf("physical source directory : %s\n", buf);
+            printf("%s\n", res);
+            if (value23 != 0)
+            {
+                perror("Error in command - ");
+            }
+            else
+            {
+                char cwd5[200];
+                char *cwd35 = getcwd(cwd5, sizeof(cwd5));
+            }
+        }
+    }
+    else
+    {
+        int value2 = chdir(getenv("HOME"));
+        if (value2 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+}
+
+void cdL(char **input_array)
+{
+    if (input_array[2] != NULL)
+    {
+        char cwd_inputnew2[1024];
+        strcpy(cwd_inputnew2, input_array[2]);
+        char *inputnew3 = "";
+        char *inputnew4 = "hi";
+        // printf("yo");
+        char *pt = strtok(cwd_inputnew2, "\n");
+        int id = chdir(pt);
+        if (id != 0)
+        {
+            perror("Error in -L command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+    else
+    {
+        int value2 = chdir(getenv("HOME"));
+        if (value2 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+}
+
 
 void cdCommand(char *input[],int size)
 {   
