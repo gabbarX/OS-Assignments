@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdbool.h>
-#define clear() printf("\033[H\033[J")
+#include <sys/wait.h>
+
 
 void init_shell()
 {
-    clear();
     printf("\n\n\n\n******************"
         "************************");
     printf("\n\n\n\t****MY SHELL****");
