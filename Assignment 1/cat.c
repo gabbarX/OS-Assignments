@@ -6,8 +6,6 @@
 #include <errno.h>
 
 extern int errno;
-
-
 int main(int argc, char *argv[])
 {
     char command[100] = "";
@@ -161,9 +159,10 @@ int main(int argc, char *argv[])
         else
         {
             printf("cat: invalid input - %s\n", flags);
-            return 1;
+            exit(EXIT_FAILURE);
         }
+        printf("\n");
         token = strtok(NULL, " ");
     }
-    return 0;
+    exit(0);
 }
