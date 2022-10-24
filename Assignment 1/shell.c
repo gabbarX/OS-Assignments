@@ -110,90 +110,11 @@ void pwd(char *input[], int size)
     }
 }
 
-void cdP(char **input_array)
-{
-    char cwd_inputnew2[1024];
 
-    if (input_array[2] != NULL)
-    {
+// void cdL(char **input)
+// {
 
-        strcpy(cwd_inputnew2, input_array[2]);
-        char *pt = strtok(cwd_inputnew2, "\n");
-        char buf[PATH_MAX];
-        char *res = realpath(pt, buf);
-        if (!res)
-        {
-            perror("realpath error:");
-        }
-        else
-        {
-            int value23 = chdir(res);
-            printf("physical source directory : %s\n", buf);
-            printf("%s\n", res);
-            if (value23 != 0)
-            {
-                perror("Error in command - ");
-            }
-            else
-            {
-                char cwd5[200];
-                char *cwd35 = getcwd(cwd5, sizeof(cwd5));
-            }
-        }
-    }
-    else
-    {
-        int value2 = chdir(getenv("HOME"));
-        if (value2 != 0)
-        {
-            perror("Error in command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-}
-
-void cdL(char **input_array)
-{
-    if (input_array[2] != NULL)
-    {
-        char cwd_inputnew2[1024];
-        strcpy(cwd_inputnew2, input_array[2]);
-        char *inputnew3 = "";
-        char *inputnew4 = "hi";
-        // printf("yo");
-        char *pt = strtok(cwd_inputnew2, "\n");
-        int id = chdir(pt);
-        if (id != 0)
-        {
-            perror("Error in -L command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-    else
-    {
-        int value2 = chdir(getenv("HOME"));
-        if (value2 != 0)
-        {
-            perror("Error in command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-}
+// }
 
 void cd(char **input)
 {
@@ -209,13 +130,12 @@ void cd(char **input)
 
     if (input[1] != NULL)
     {
-
         strcpy(cwd_inputnew1, input[1]);
+        isCdP = !strcmp(cwd_inputnew1, "-P");
+        isCdL = !strcmp(cwd_inputnew1, "-L");
         consoleKey = !strcmp(cwd_inputnew1, "~");
         dashDash = !strcmp(cwd_inputnew1, "--");
         dash = !strcmp(cwd_inputnew1, "-");
-        isCdP = !strcmp(cwd_inputnew1, "-P");
-        isCdL = !strcmp(cwd_inputnew1, "-L");
         cdHelp = !strcmp(cwd_inputnew1, "--help");
     }
     else
@@ -258,11 +178,82 @@ void cd(char **input)
     }
     else if (isCdP == true)
     {
-        cdP(input);
+        char cwd[1024];
+        if (input[2] != NULL)
+        {
+
+            strcpy(cwd, input[2]);
+            char *pt = strtok(cwd, "\n");
+            char buf[PATH_MAX];
+            char *path = realpath(pt, buf);
+            if (!path)
+            {
+                perror("realpath error:");
+            }
+            else
+            {
+                bool check = chdir(path);
+                printf("physical source directory : %s\n", buf);
+                printf("%s\n", path);
+                if (check == true)
+                {
+                    perror("Error in command - ");
+                }
+                else
+                {
+                    char temp[200];
+                    char *newCwd = getcwd(temp, sizeof(temp));
+                }
+            }
+        }
+        else
+        {
+            bool check = chdir(getenv("HOME"));
+            if (check == true)
+            {
+                perror("An error occured in: ");
+            }
+            else
+            {
+                char temp[200];
+                char *newCwd = getcwd(temp, sizeof(temp));
+                printf("%s", newCwd);
+            }
+        }
     }
     else if (isCdL == true)
     {
-        cdL(input);
+    if (input[2] != NULL)
+    {
+        char cwd[1024];
+        strcpy(cwd, input[2]);
+        char *pt = strtok(cwd, "\n");
+        int id = chdir(pt);
+        if (id != 0)
+        {
+            perror("Error in -L command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+    else
+    {
+        bool check = chdir(getenv("HOME"));
+        if (check == true)
+        {
+            perror("An error occured in: ");
+        }
+        else
+        {
+            char cwd[200];
+            char *newcwd = getcwd(cwd, sizeof(cwd));
+            printf("%s", newcwd);
+        }
+    }
     }
     else
     {
