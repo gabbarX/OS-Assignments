@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
-// #include <sysexits.h>
+#include <sysexits.h>
 #include <errno.h>
 
 void printDate()
