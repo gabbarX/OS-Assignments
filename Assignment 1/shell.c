@@ -160,10 +160,10 @@ void cd(char **input)
     }
     else if (consoleKey == true || dashDash == true || argMissing == true)
     {
-        int flag127 = chdir(getenv("HOME"));
-        if (flag127 != 0)
+        bool check = chdir(getenv("HOME"));
+        if (check == true)
         {
-            perror("Error in command - ");
+            perror("An error occured in: ");
         }
         else
         {
@@ -175,7 +175,10 @@ void cd(char **input)
 
     else if (cdHelp == true)
     {
-        printf("%s", "this command is used to change the directory to given input");
+        printf("cd [option] [dir]");
+        printf("Change the shell working directory.");
+        printf("-P \tuse the physical directory structure without following symbolic links: resolve symbolic links in DIR before processing instances of `..' ");
+        printf("-L \tforce symbolic links to be followed: resolve symbolic links in DIR after processing instances of `..'");
     }
     else if (isCdP == true)
     {
@@ -198,7 +201,7 @@ void cd(char **input)
                 printf("%s\n", path);
                 if (check == true)
                 {
-                    perror("Error in command - ");
+                    perror("An error occured in: ");
                 }
                 else
                 {
@@ -232,7 +235,7 @@ void cd(char **input)
         int id = chdir(pt);
         if (id != 0)
         {
-            perror("Error in -L command - ");
+            perror("An error occured in: ");
         }
         else
         {
@@ -374,10 +377,11 @@ int main(){
             else if (!strcmp(input[0], "cat")) {
                 pid_t id;
                 int status;
+                // printf("%s--->",input[1]);
                 if ((id = fork()) == 0)
                 {
-                    char *args[] = {"./cat", commandCopy, NULL};
-                    execvp("./date", args);
+                    char *args[] = {"./cat", commandCopy, input[1]};
+                    execvp("./cat", args);
                     exit(0);
                 }
                 else
