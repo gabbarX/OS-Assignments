@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <sys/wait.h>
+#include <pthread.h>
 
 
 void init_shell()
@@ -22,6 +23,10 @@ void init_shell()
     printf("\nCurrent user: %s", username);
     printf("\n");
 }
+
+// void* thread_rm(void* arg){
+
+// }
 
 void echo(char *input[], int size)
 {
@@ -190,40 +195,40 @@ void cdL(char **input_array)
     }
 }
 
-void cd(char **input_array)
+void cd(char **input)
 {
-    int flaggers1 = INT_MAX;
-    int flaggers2 = INT_MAX;
-    int flaggers3 = INT_MAX;
-    int flaggers4 = INT_MAX;
-    int flaggers5 = INT_MAX;
-    int flaggers6 = INT_MAX;
-    int flaggers7 = INT_MAX;
+    bool consoleKey = false;
+    bool dashDash = false;
+    bool dash = false;
+    bool isCdP = false;
+    bool isCdL = false;
+    bool cdHelp = false;
+    bool argMissing = false;
 
     char cwd_inputnew1[1024];
 
-    if (input_array[1] != NULL)
+    if (input[1] != NULL)
     {
 
-        strcpy(cwd_inputnew1, input_array[1]);
-        flaggers1 = strcmp(cwd_inputnew1, "~");
-        flaggers2 = strcmp(cwd_inputnew1, "--");
-        flaggers3 = strcmp(cwd_inputnew1, "-");
-        flaggers4 = strcmp(cwd_inputnew1, "-P");
-        flaggers5 = strcmp(cwd_inputnew1, "-L");
-        flaggers6 = strcmp(cwd_inputnew1, "--help");
+        strcpy(cwd_inputnew1, input[1]);
+        consoleKey = !strcmp(cwd_inputnew1, "~");
+        dashDash = !strcmp(cwd_inputnew1, "--");
+        dash = !strcmp(cwd_inputnew1, "-");
+        isCdP = !strcmp(cwd_inputnew1, "-P");
+        isCdL = !strcmp(cwd_inputnew1, "-L");
+        cdHelp = !strcmp(cwd_inputnew1, "--help");
     }
     else
     {
-        flaggers7 = 0;
+        argMissing = 0;
     }
     
-    if (flaggers3 == 0)
+    if (dash == true)
     {
-        int flag3 = chdir("..");
-        if (flag3 != 0)
+        int check = chdir("..");
+        if (check != 0)
         {
-            perror("Error in command - ");
+            perror("An error occured in: ");
         }
         else
         {
@@ -232,7 +237,7 @@ void cd(char **input_array)
             printf("%s", cwd32);
         }
     }
-    else if (flaggers1 == 0 || flaggers2 == 0 || flaggers7 == 0)
+    else if (consoleKey == true || dashDash == true || argMissing == true)
     {
         int flag127 = chdir(getenv("HOME"));
         if (flag127 != 0)
@@ -247,17 +252,17 @@ void cd(char **input_array)
         }
     }
 
-    else if (flaggers6 == 0)
+    else if (cdHelp == true)
     {
         printf("%s", "this command is used to change the directory to given input");
     }
-    else if (flaggers4 == 0)
+    else if (isCdP == true)
     {
-        cdP(input_array);
+        cdP(input);
     }
-    else if (flaggers5 == 0)
+    else if (isCdL == true)
     {
-        cdL(input_array);
+        cdL(input);
     }
     else
     {
@@ -275,84 +280,6 @@ void cd(char **input_array)
         }
     }
 }
-
-
-// void cdCommand(char *input[],int size)
-// {   
-//     // printf("cd nahi challa bc function hu");
-//     bool cdP = false;
-//     bool cdL = false;
-//     bool cdHelp = false;
-//     // bool noparams = false;
-//     // printf("%b",noparams);
-//     if(size>1){
-        
-//         if(strcmp(input[1],"-P")==0){
-//             cdP = true;
-//         }
-//         if(strcmp(input[1],"-L")==0){
-//             cdL = true;
-//         }
-//         if(strcmp(input[1],"--help")==0){
-//             cdHelp = true;
-//         }
-//         if(strcmp(input[1], "..")){
-//             chdir("..");
-//         }
-//         else{
-//             printf("INvalid option");
-//         }
-//     }
-//     else {
-//         int flg = chdir(getenv("HOME"));
-//         if(flg){
-//             printf("ERROR");
-//         }
-//         else {
-//             char cwd2[1000];
-//             getcwd(cwd2, 1000);
-//             printf("%s\n",cwd2);
-//         }
-//     }
-//     if(cdHelp){
-//         printf("cd : [-L || -P][dir]\n");
-//         printf("Change the current directory to DIR. The default DIR is the value of the HOME shell variable.\n");
-//     }   
-//     if(cdL){
-        
-//     }
-//     if(cdP){
-
-//     }
-// }
-
-
-
-// void echon(char **input_array, int size)
-// {
-//     int i = 2;
-//     while (i < size)
-//     {
-//         if (input_array[i] != NULL)
-//         {
-//             printf("%s ", input_array[i]);
-//         }
-//         i++;
-//     }
-// }
-
-// void echoE(char **input_array, int size)
-// {
-//     int i = 2;
-//     while (i < size)
-//     {
-//         if (input_array[i] != NULL)
-//         {
-//             printf("%s ", input_array[i]);
-//         }
-//         i++;
-//     }
-// }
 
 
 int main(){
@@ -384,12 +311,21 @@ int main(){
         
         for(int i=0;i<size;i++){
             if(!strcmp(input[i], "&t")){
+                input[i] = NULL;
                 isThreadBased = true;
             }
         }
+        // for(int i=0;i<size;i++){
+        //     if(input[i]==NULL){
+        //         printf("null\n");
+        //     }
+        //     printf("%s\n",input[i]);
+        // }
 
         if(isThreadBased && !strcmp(input[0], "rm")){
             printf("Thread based");
+            // pthread_t pid_t;
+            // pthread_create(&pid_t,NULL, thread_rm ,NULL);
         }
         else {
             if (!strcmp(input[0], "exit"))
@@ -512,12 +448,6 @@ int main(){
             {
                 printf("Command not found\n");
             }
-        
-
-
         }
-
-
     }
-    
 }
