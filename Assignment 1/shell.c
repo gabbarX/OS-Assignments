@@ -90,7 +90,7 @@ void pwd(char *input[], int size)
     }
     else if (strcmp(input[1], "-L"))
     {
-        char buf[PATH_MAX];
+        char buf[1000];
         char newarr[1024];
         char *res = realpath(newarr, buf);
         char *cwd2 = getcwd(newarr, sizeof(newarr));
@@ -241,6 +241,21 @@ int main(){
             // }
             cdCommand(input,size);
             // printf("cd nai challa mc!");
+        }
+        else if(strcmp(input[0], "date") == 0){
+        pid_t id;
+        int status;
+        if ((id = fork()) == 0)
+        {
+            char *args[] = {"./date", commandCopy, NULL};
+            execvp("./date", args);
+            exit(0);
+        }
+        else
+        {
+            pid_t time;
+            time = wait(&status);
+        }
         }
         else
         {
