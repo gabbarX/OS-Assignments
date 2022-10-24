@@ -9,14 +9,17 @@
 
 void init_shell()
 {
-    printf("\n\n\n\n******************"
-        "************************");
-    printf("\n\n\n\t****MY SHELL****");
-    printf("\n\n\t-USE AT YOUR OWN RISK-");
-    printf("\n\n\n\n*******************"
-        "***********************");
+    printf("\n******************"
+        "*********************************************************");
+    printf("\n\t\t\tWelcome to Rasputin");
+    printf("\n\t\tRasputin is a basic unix based shell!\n");
+    printf("---------------------------------------------------------------------------");
+    printf("\n\t\tCurrently supported commands are:");
+    printf("\n\t\t[cd] [echo] [pwd] [ls] [cat] [date] [rm] [mkdir]");
+    printf("\n******************"
+        "*********************************************************");
     char* username = getenv("USER");
-    printf("\n\n\nUSER is: @%s", username);
+    printf("\nCurrent user: %s", username);
     printf("\n");
 }
 
@@ -99,6 +102,91 @@ void pwd(char *input[], int size)
     else{
         printf("pwd: invalid option -- '%s'\n", input[1]);
         printf("Try 'pwd --help' for more information.\n");
+    }
+}
+
+void cdP(char **input_array)
+{
+    char cwd_inputnew2[1024];
+
+    if (input_array[2] != NULL)
+    {
+
+        strcpy(cwd_inputnew2, input_array[2]);
+        char *pt = strtok(cwd_inputnew2, "\n");
+        char buf[PATH_MAX];
+        char *res = realpath(pt, buf);
+        if (!res)
+        {
+            perror("realpath error:");
+        }
+        else
+        {
+            int value23 = chdir(res);
+            printf("physical source directory : %s\n", buf);
+            printf("%s\n", res);
+            if (value23 != 0)
+            {
+                perror("Error in command - ");
+            }
+            else
+            {
+                char cwd5[200];
+                char *cwd35 = getcwd(cwd5, sizeof(cwd5));
+            }
+        }
+    }
+    else
+    {
+        int value2 = chdir(getenv("HOME"));
+        if (value2 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+}
+
+void cdL(char **input_array)
+{
+    if (input_array[2] != NULL)
+    {
+        char cwd_inputnew2[1024];
+        strcpy(cwd_inputnew2, input_array[2]);
+        char *inputnew3 = "";
+        char *inputnew4 = "hi";
+        // printf("yo");
+        char *pt = strtok(cwd_inputnew2, "\n");
+        int id = chdir(pt);
+        if (id != 0)
+        {
+            perror("Error in -L command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
+    }
+    else
+    {
+        int value2 = chdir(getenv("HOME"));
+        if (value2 != 0)
+        {
+            perror("Error in command - ");
+        }
+        else
+        {
+            char cwd[200];
+            char *cwd3 = getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd3);
+        }
     }
 }
 
@@ -189,140 +277,54 @@ void cd(char **input_array)
 }
 
 
-void cdP(char **input_array)
-{
-    char cwd_inputnew2[1024];
-
-    if (input_array[2] != NULL)
-    {
-
-        strcpy(cwd_inputnew2, input_array[2]);
-        char *pt = strtok(cwd_inputnew2, "\n");
-        char buf[PATH_MAX];
-        char *res = realpath(pt, buf);
-        if (!res)
-        {
-            perror("realpath error:");
-        }
-        else
-        {
-            int value23 = chdir(res);
-            printf("physical source directory : %s\n", buf);
-            printf("%s\n", res);
-            if (value23 != 0)
-            {
-                perror("Error in command - ");
-            }
-            else
-            {
-                char cwd5[200];
-                char *cwd35 = getcwd(cwd5, sizeof(cwd5));
-            }
-        }
-    }
-    else
-    {
-        int value2 = chdir(getenv("HOME"));
-        if (value2 != 0)
-        {
-            perror("Error in command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-}
-
-void cdL(char **input_array)
-{
-    if (input_array[2] != NULL)
-    {
-        char cwd_inputnew2[1024];
-        strcpy(cwd_inputnew2, input_array[2]);
-        char *inputnew3 = "";
-        char *inputnew4 = "hi";
-        // printf("yo");
-        char *pt = strtok(cwd_inputnew2, "\n");
-        int id = chdir(pt);
-        if (id != 0)
-        {
-            perror("Error in -L command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-    else
-    {
-        int value2 = chdir(getenv("HOME"));
-        if (value2 != 0)
-        {
-            perror("Error in command - ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
-    }
-}
-
-
-void cdCommand(char *input[],int size)
-{   
-    // printf("cd nahi challa bc function hu");
-    bool cdP = false;
-    bool cdL = false;
-    bool cdHelp = false;
-    // bool noparams = false;
-    // printf("%b",noparams);
-    if(size>1){
+// void cdCommand(char *input[],int size)
+// {   
+//     // printf("cd nahi challa bc function hu");
+//     bool cdP = false;
+//     bool cdL = false;
+//     bool cdHelp = false;
+//     // bool noparams = false;
+//     // printf("%b",noparams);
+//     if(size>1){
         
-        if(strcmp(input[1],"-P")==0){
-            cdP = true;
-        }
-        if(strcmp(input[1],"-L")==0){
-            cdL = true;
-        }
-        if(strcmp(input[1],"--help")==0){
-            cdHelp = true;
-        }
-        if(strcmp(input[1], "..")){
-            chdir("..");
-        }
-        else{
-            printf("INvalid option");
-        }
-    }
-    else {
-        int flg = chdir(getenv("HOME"));
-        if(flg){
-            printf("ERROR");
-        }
-        else {
-            char cwd2[1000];
-            getcwd(cwd2, 1000);
-            printf("%s\n",cwd2);
-        }
-    }
-    if(cdHelp){
-        printf("cd : [-L || -P][dir]\n");
-        printf("Change the current directory to DIR. The default DIR is the value of the HOME shell variable.\n");
-    }   
-    if(cdL){
+//         if(strcmp(input[1],"-P")==0){
+//             cdP = true;
+//         }
+//         if(strcmp(input[1],"-L")==0){
+//             cdL = true;
+//         }
+//         if(strcmp(input[1],"--help")==0){
+//             cdHelp = true;
+//         }
+//         if(strcmp(input[1], "..")){
+//             chdir("..");
+//         }
+//         else{
+//             printf("INvalid option");
+//         }
+//     }
+//     else {
+//         int flg = chdir(getenv("HOME"));
+//         if(flg){
+//             printf("ERROR");
+//         }
+//         else {
+//             char cwd2[1000];
+//             getcwd(cwd2, 1000);
+//             printf("%s\n",cwd2);
+//         }
+//     }
+//     if(cdHelp){
+//         printf("cd : [-L || -P][dir]\n");
+//         printf("Change the current directory to DIR. The default DIR is the value of the HOME shell variable.\n");
+//     }   
+//     if(cdL){
         
-    }
-    if(cdP){
+//     }
+//     if(cdP){
 
-    }
-}
+//     }
+// }
 
 
 
@@ -354,7 +356,7 @@ void cdCommand(char *input[],int size)
 
 
 int main(){
-    printf("Welcome to the shell\n");
+    // printf("Welcome to the shell\n");
     init_shell();
     
     while (true)
@@ -379,19 +381,19 @@ int main(){
             size++;
         }
 
-        if (strcmp(input[0], "exit") == 0)
+        if (!strcmp(input[0], "exit"))
         {
             printf("Exiting the shell\n");
             break;
         }
-        else if(strcmp(input[0], "pwd") == 0){
+        else if(!strcmp(input[0], "pwd")){
             pwd(input, size);
         }
-        else if (strcmp(input[0], "echo") == 0)
+        else if (!strcmp(input[0], "echo"))
         {
             echo(input,size);
         }
-        else if (strcmp(input[0], "cd") == 0)
+        else if (!strcmp(input[0], "cd"))
         {
             // char *cd = strtok(input[0], " ");
             // cd = strtok(NULL, " ");
@@ -411,10 +413,11 @@ int main(){
             // {
             //     chdir(cd);
             // }
-            cdCommand(input,size);
-            // printf("cd nai challa mc!");
+            // cdCommand(input,size);
+            // // printf("cd nai challa mc!");
+            cd(input);
         }
-        else if(strcmp(input[0], "date") == 0){
+        else if(!strcmp(input[0], "date")){
         pid_t id;
         int status;
         if ((id = fork()) == 0)
@@ -428,6 +431,66 @@ int main(){
             pid_t time;
             time = wait(&status);
         }
+        }
+        else if (!strcmp(input[0], "cat")) {
+            pid_t id;
+            int stat;
+            if ((id = fork()) == 0)
+            {
+                char *args[] = {"./cat", commandCopy, NULL};
+                execvp("./date", args);
+                exit(0);
+            }
+            else
+            {
+                pid_t time;
+                time = wait(&stat);
+            }
+        }
+        else if (!strcmp(input[0], "ls")) {
+            pid_t id;
+            int stat;
+            if ((id = fork()) == 0)
+            {
+                char *args[] = {"./ls", commandCopy, NULL};
+                execvp("./ls", args);
+                exit(0);
+            }
+            else
+            {
+                pid_t time;
+                time = wait(&stat);
+            }
+        }
+        else if (!strcmp(input[0],"mkdir")) {
+            pid_t id;
+            int stat;
+            if ((id = fork()) == 0)
+            {
+                char *args[] = {"./mkdir", commandCopy, NULL};
+                execvp("./mkdir", args);
+                exit(0);
+            }
+            else
+            {
+                pid_t time;
+                time = wait(&stat);
+            }
+        }
+        else if (!strcmp(input[0],"rm")) {
+            pid_t id;
+            int stat;
+            if ((id = fork()) == 0)
+            {
+                char *args[] = {"./rm", commandCopy, NULL};
+                execvp("./rm", args);
+                exit(0);
+            }
+            else
+            {
+                pid_t time;
+                time = wait(&stat);
+            }
         }
         else
         {
