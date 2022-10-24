@@ -4,65 +4,51 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void rmFile(char fileName[1000])
-{
-    if (unlink(fileName) != 0)
-    {
-        perror(fileName);
-    }
-}
-
-void rmFileD(char fileName[1000])
-{
-    if (rmdir(fileName) != 0)
-    {
-        perror(fileName);
-    }
-}
-
-void rmFileV(char fileName[1000])
-{
-    if (unlink(fileName) == 0)
-    {
-        printf("removed '%s'\n", fileName);
-    }
-    else
-    {
-        perror(fileName);
-    }
-}
-
 int main(int argc, char *argv[])
 {
-    char commandName[10] = "";
-    char flag[10] = "";
+    char command[100] = "";
+    char flags[100] = "";
     char *token = strtok(argv[1], " ");
-    strcpy(commandName, token);
+    strcpy(command, token);
     token = strtok(NULL, " ");
     if (token[0] == '-')
     {
-        strcpy(flag, token);
+        strcpy(flags, token);
         token = strtok(NULL, " ");
     }
+    
     while (token != NULL)
     {
-        char fileName[1000] = "";
-        strcpy(fileName, token);
-        if (flag[0] == '\0')
+        char toRm[1000] = "";
+        strcpy(toRm, token);
+        if (flags[0] == '\0')
         {
-            rmFile(fileName);
+            if (unlink(toRm) != 0)
+            {
+                perror(toRm);
+            }
         }
-        else if (flag[1] == 'd')
+        else if (flags[1] == 'd')
         {
-            rmFileD(fileName);
+            if (rmdir(toRm) != 0)
+            {
+                perror(toRm);
+            }
         }
-        else if (flag[1] == 'v')
+        else if (flags[1] == 'v')
         {
-            rmFileV(fileName);
+            if (unlink(toRm) == 0)
+            {
+                printf("removed '%s'\n", toRm);
+            }
+            else
+            {
+                perror(toRm);
+            }
         }
         else
         {
-            printf("Invalid Input -- %s\n", flag);
+            printf("rm : invalid option -- %s\n", flags);
             return 1;
         }
         token = strtok(NULL, " ");

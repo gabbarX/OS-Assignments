@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
-#include <sysexits.h>
 
 void Date()
 {
@@ -75,7 +74,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        printf("date: invalid option -- '%s'", flags);
+        printf("date: invalid option -- '%s'\n", flags);
         return 1;
     }
     return 0;

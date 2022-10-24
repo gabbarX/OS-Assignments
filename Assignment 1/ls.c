@@ -140,19 +140,19 @@ void printLsL(char argument[1000])
 
 int main(int argc, char *argv[])
 {
-    char commandName[10] = "";
-    char flag[10] = "";
+    char command[100] = "";
+    char flags[100] = "";
     char argument[1000] = "";
     if (argc > 1)
     {
         char *token = strtok(argv[1], " ");
-        strcpy(commandName, token);
+        strcpy(command, token);
         token = strtok(NULL, " ");
         if (token != NULL)
         {
             if (token[0] == '-')
             {
-                strcpy(flag, token);
+                strcpy(flags, token);
                 token = strtok(NULL, " ");
                 if (token != NULL)
                 {
@@ -165,21 +165,21 @@ int main(int argc, char *argv[])
             }
         }
     }
-    if (flag[0] == '\0')
+    if (flags[0] == '\0')
     {
         printLs(argument);
     }
-    else if (flag[1] == 'a')
+    else if (flags[1] == 'a')
     {
         printLsA(argument);
     }
-    else if (flag[1] == 'l')
+    else if (flags[1] == 'l')
     {
         printLsL(argument);
     }
     else
     {
-        printf("Invalid Input -- %s\n", flag);
+        printf("Invalid Input -- %s\n", flags);
         return 1;
     }
     return 0;
