@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     char command[100] = "";
     char flags[100] = "";
     bool didRun = false;
+    char fileName[1000] = "";
     char *token;
     if(argc==1){
         token = strtok(argv[0], " ");
@@ -27,44 +28,54 @@ int main(int argc, char *argv[])
     }
     if(token==NULL){
         printf("rm : missing operand\n");
+        return 1;
     }
     
     while (token != NULL)
     {   
         didRun = true;
-        char toRm[1000] = "";
-        strcpy(toRm, token);
-        if (flags[0] == '\0')
+        strcpy(fileName, token);
+        token = strtok(NULL, " ");
+    }
+    
+    if (!strcmp(flags, ""))
+    {   
+        int check;
+        check = unlink(fileName);
+        if (check<0)
         {
-            if (unlink(toRm) != 0)
-            {
-                perror(toRm);
-            }
+            perror(fileName);
+            return 1;
         }
-        else if (flags[1] == 'd')
+    }
+    else if (!strcmp(flags, "-d"))
+    {   
+        int check = rmdir(fileName);
+        if ( check < 0)
         {
-            if (rmdir(toRm) != 0)
-            {
-                perror(toRm);
-            }
+            perror(fileName);
+            return 1;
         }
-        else if (flags[1] == 'v')
+    }
+    else if (!strcmp(flags, "-v"))
+    {   
+        int check = unlink(fileName);
+        if ( check == 0)
         {
-            if (unlink(toRm) == 0)
-            {
-                printf("removed '%s'\n", toRm);
-            }
-            else
-            {
-                perror(toRm);
-            }
+            printf("removed '%s'\n", fileName);
         }
         else
         {
-            printf("rm : invalid option -- %s\n", flags);
+            perror(fileName);
             return 1;
         }
-        token = strtok(NULL, " ");
     }
+    else
+    {
+        printf("rm : invalid option -- %s\n", flags);
+        return 1;
+    }
+    
+    
     return 0;
 }
