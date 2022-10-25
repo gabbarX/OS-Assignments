@@ -25,9 +25,15 @@ void init_shell()
     printf("\n");
 }
 
-// void* thread_rm(void* arg){
-
-// }
+void* thread_rm(void* arg){
+    // input[0]
+    char rm_path[PATH_MAX]= "./rm";
+    char *args[] = {"./rm", arg, NULL};
+    printf("thread command -> %s",strcat("rm", (char*)arg));
+    // system(strcat("rm", (char*)arg));
+    system(strcat(rm_path, (char*) args));
+    exit(0);
+}
 
 void echo(char *input[], int size)
 {
@@ -306,21 +312,33 @@ int main(){
         
         for(int i=0;i<size;i++){
             if(!strcmp(input[i], "&t")){
-                input[i] = NULL;
+                // input[i] = NULL;
                 isThreadBased = true;
             }
         }
-        // for(int i=0;i<size;i++){
-        //     if(input[i]==NULL){
-        //         printf("null\n");
-        //     }
-        //     printf("%s\n",input[i]);
-        // }
+        
+        char threadCommand[200]="";
+        bool firstRun = true;
+        for(int i=0;i<size;i++){
+            if(!strcmp(input[i], "&t")){
+                continue;
+            }
+            else {
+                if(!firstRun){
+                    strcat(threadCommand, " ");      
+                }
+                strcat(threadCommand, input[i]);
+                firstRun = false;
+            }
+        }
+
+        // printf("CONCATINATED STRING -> %s\n",threadCommand);
 
         if(isThreadBased && !strcmp(input[0], "rm")){
-            printf("Thread based");
-            // pthread_t pid_t;
-            // pthread_create(&pid_t,NULL, thread_rm ,NULL);
+            // printf("Thread based\n");
+            pthread_t pid_t;
+            pthread_create(&pid_t,NULL, thread_rm ,(void*) threadCommand);
+            pthread_join(pid_t, NULL);
         }
         else {
             if (!strcmp(input[0], "exit"))
