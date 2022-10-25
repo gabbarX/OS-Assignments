@@ -46,6 +46,8 @@ void DateHelp()
 }
 int main(int argc, char *argv[])
 {
+    // printf("You are in date\n");
+    // printf("%s",argc);
     char command[100] = "";
     char flags[100] = "";
     char *token = strtok(argv[1], " ");

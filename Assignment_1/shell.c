@@ -304,8 +304,9 @@ int main(){
             int statusus;
             if ((id = fork()) == 0)
             {
-                char *args[] = {"./date", commandCopy, NULL};
-                execvp("./date", args);
+                // char *args[] = {"./date", commandCopy, NULL};
+                // execvp("./date", args);
+                execl("./date","./date", commandCopy, NULL);
                 exit(EXIT_SUCCESS);
             }
             else
@@ -319,8 +320,8 @@ int main(){
                 int status;
                 if ((id = fork()) == 0)
                 {
-                    char *args[] = {"./cat", commandCopy, input[1]};
-                    execvp("./cat", args);
+                    // char *args[] = {"./cat", commandCopy, input[1]};
+                    execl("./cat","./cat", commandCopy, input[1]);
                     exit(EXIT_SUCCESS);
                 }
                 else
@@ -334,8 +335,8 @@ int main(){
                 int statusus;
                 if ((id = fork()) == 0)
                 {
-                    char *args[] = {"./ls", commandCopy, NULL};
-                    execvp("./ls", args);
+                    // char *args[] = {"./ls", commandCopy, NULL};
+                    execl("./ls", "./ls",commandCopy,NULL);
                     exit(EXIT_SUCCESS);
                 }
                 else
@@ -350,7 +351,7 @@ int main(){
                 if ((id = fork()) == 0)
                 {
                     char *args[] = {"./mkdir", commandCopy, NULL};
-                    execvp("./mkdir", args);
+                    execl("./mkdir", "./mkdir",commandCopy,NULL);
                     exit(EXIT_SUCCESS);
                 }
                 else
@@ -368,8 +369,8 @@ int main(){
                 else {
                     if ((id = fork()) == 0)
                     {
-                        char *args[] = {"./rm", commandCopy, NULL};
-                        execvp("./rm", args);
+                        // char *args[] = {"./rm", commandCopy, NULL};
+                        execl("./rm","./rm",commandCopy, NULL);
                         exit(EXIT_SUCCESS);
                     }
                     else
