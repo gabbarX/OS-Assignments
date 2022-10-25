@@ -165,9 +165,43 @@ int main(int argc, char *argv[])
             free(names);
         }
     }
-    else if (flags[1] == 'l')
+    else if (flags[1] == '1')
     {
-        lsLcommand(argument);
+            struct dirent **nameList;
+            int n;
+            if (strlen(argument) == 0)
+            {
+                n = scandir(".", &nameList, NULL, alphasort);
+            }
+            else
+            {
+                n = scandir(argument, &nameList, NULL, alphasort);
+            }
+            int itr = 0;
+            if (n < 0)
+            {
+                perror("scandir");
+                exit(1);
+            }
+            else
+            {
+                while (itr < n)
+                {
+                    if (nameList[itr]->d_name[0] == '.')
+                    {
+                        free(nameList[itr++]);
+                        continue;
+                    }
+                    printf("%s \n", nameList[itr]->d_name);
+                    free(nameList[itr++]);
+                }
+                printf("\n");
+                free(nameList);
+                exit(0);
+            }
+    }
+    else if (flags[1] == 'h') {
+        printf("help?\n");
     }
     else
     {
