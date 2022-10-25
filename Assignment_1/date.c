@@ -43,7 +43,6 @@ void DateHelp()
     printf("-u \t print or set Coordinated Universal Time (UTC)\n");
     printf("-R \t output date and time in RFC 5322 format.\n");
     printf("--help \t brings up this help text.\n");
-    // printf("DateHelp");
 }
 int main(int argc, char *argv[])
 {
