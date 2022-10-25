@@ -11,7 +11,13 @@ int main(int argc, char *argv[])
     char command[100] = "";
     char flags[100] = "";
     bool didRun = false;
-    char *token = strtok(argv[1], " ");
+    char *token;
+    if(argc==1){
+        token = strtok(argv[0], " ");
+    }
+    else {
+        token = strtok(argv[1], " ");
+    }
     strcpy(command, token);
     token = strtok(NULL, " ");
     if (token[0] == '-')

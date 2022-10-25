@@ -27,12 +27,13 @@ void init_shell()
 
 void* thread_rm(void* arg){
     // input[0]
-    char rm_path[PATH_MAX]= "./rm";
-    char *args[] = {"./rm", arg, NULL};
-    printf("thread command -> %s",strcat("rm", (char*)arg));
-    // system(strcat("rm", (char*)arg));
-    system(strcat(rm_path, (char*) args));
-    exit(0);
+    char temp[200]="";
+    // printf("haha mai thread hu\n");
+    char rm_path[1024]= "./rm";
+    // printf("command going to system()->%s",(char*) arg);
+    // system(strcat("./rm ",(char*)arg));
+    system((char*)arg);
+    return 0;
 }
 
 void echo(char *input[], int size)
@@ -312,7 +313,6 @@ int main(){
         
         for(int i=0;i<size;i++){
             if(!strcmp(input[i], "&t")){
-                // input[i] = NULL;
                 isThreadBased = true;
             }
         }
@@ -332,10 +332,9 @@ int main(){
             }
         }
 
-        // printf("CONCATINATED STRING -> %s\n",threadCommand);
+        // printf("thread command222 -> %s",threadCommand);
 
         if(isThreadBased && !strcmp(input[0], "rm")){
-            // printf("Thread based\n");
             pthread_t pid_t;
             pthread_create(&pid_t,NULL, thread_rm ,(void*) threadCommand);
             pthread_join(pid_t, NULL);
@@ -355,26 +354,6 @@ int main(){
             }
             else if (!strcmp(input[0], "cd"))
             {
-                // char *cd = strtok(input[0], " ");
-                // cd = strtok(NULL, " ");
-                // if (cd == NULL)
-                // {
-                //     printf("Please enter a directory\n");
-                // }
-                // else if (strcmp(cd, "..") == 0)
-                // {
-                //     chdir("..");
-                // }
-                // else if (strcmp(cd, ".") == 0)
-                // {
-                //     chdir(".");
-                // }
-                // else
-                // {
-                //     chdir(cd);
-                // }
-                // cdCommand(input,size);
-                // // printf("cd nai challa mc!");
                 cd(input);
             }
             else if(!strcmp(input[0], "date")){
@@ -395,7 +374,6 @@ int main(){
             else if (!strcmp(input[0], "cat")) {
                 pid_t id;
                 int status;
-                // printf("%s--->",input[1]);
                 if ((id = fork()) == 0)
                 {
                     char *args[] = {"./cat", commandCopy, input[1]};
