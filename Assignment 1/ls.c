@@ -9,68 +9,6 @@
 #include <pwd.h>
 #include <grp.h>
 
-void lsCommand(char argument[1000])
-{
-    struct dirent **nameList;
-    int n;
-    if (strlen(argument) == 0)
-    {
-        n = scandir(".", &nameList, NULL, alphasort);
-    }
-    else
-    {
-        n = scandir(argument, &nameList, NULL, alphasort);
-    }
-    int itr = 0;
-    if (n < 0)
-    {
-        perror("scandir");
-    }
-    else
-    {
-        while (itr < n)
-        {
-            if (nameList[itr]->d_name[0] == '.')
-            {
-                free(nameList[itr++]);
-                continue;
-            }
-            printf("%s ", nameList[itr]->d_name);
-            free(nameList[itr++]);
-        }
-        printf("\n");
-        free(nameList);
-    }
-}
-
-void lsAcommand(char argument[1000])
-{
-    struct dirent **names;
-    int n;
-    if (strlen(argument) == 0)
-    {
-        n = scandir(".", &names, NULL, alphasort);
-    }
-    else
-    {
-        n = scandir(argument, &names, NULL, alphasort);
-    }
-    int i = 0;
-    if (n < 0)
-    {
-        perror("scandir");
-    }
-    else
-    {
-        while (i < n)
-        {
-            printf("%s ", names[i]->d_name);
-            free(names[i++]);
-        }
-        printf("\n");
-        free(names);
-    }
-}
 
 void lsLcommand(char argument[1000])
 {
@@ -143,35 +81,89 @@ int main(int argc, char *argv[])
     char command[100] = "";
     char flags[100] = "";
     char argument[1000] = "";
-    if (argc > 1)
+    char *token = strtok(argv[1], " ");
+    strcpy(command, token);
+    token = strtok(NULL, " ");
+    if (token != NULL)
     {
-        char *token = strtok(argv[1], " ");
-        strcpy(command, token);
-        token = strtok(NULL, " ");
-        if (token != NULL)
+        if (token[0] == '-')
         {
-            if (token[0] == '-')
-            {
-                strcpy(flags, token);
-                token = strtok(NULL, " ");
-                if (token != NULL)
-                {
-                    strcpy(argument, token);
-                }
-            }
-            else
+            strcpy(flags, token);
+            token = strtok(NULL, " ");
+            if (token != NULL)
             {
                 strcpy(argument, token);
             }
         }
+        else
+        {
+            strcpy(argument, token);
+        }
     }
+    
     if (flags[0] == '\0')
     {
-        lsCommand(argument);
+        struct dirent **nameList;
+        int n;
+        if (strlen(argument) == 0)
+        {
+            n = scandir(".", &nameList, NULL, alphasort);
+        }
+        else
+        {
+            n = scandir(argument, &nameList, NULL, alphasort);
+        }
+        int itr = 0;
+        if (n < 0)
+        {
+            perror("scandir");
+            exit(1);
+        }
+        else
+        {
+            while (itr < n)
+            {
+                if (nameList[itr]->d_name[0] == '.')
+                {
+                    free(nameList[itr++]);
+                    continue;
+                }
+                printf("%s ", nameList[itr]->d_name);
+                free(nameList[itr++]);
+            }
+            printf("\n");
+            free(nameList);
+            exit(0);
+        }
     }
     else if (flags[1] == 'a')
     {
-        lsAcommand(argument);
+        struct dirent **names;
+        int n;
+        if (strlen(argument) == 0)
+        {
+            n = scandir(".", &names, NULL, alphasort);
+        }
+        else
+        {
+            n = scandir(argument, &names, NULL, alphasort);
+        }
+        int i = 0;
+        if (n < 0)
+        {
+            perror("scandir");
+            exit(1);
+        }
+        else
+        {
+            while (i < n)
+            {
+                printf("%s ", names[i]->d_name);
+                free(names[i++]);
+            }
+            printf("\n");
+            free(names);
+        }
     }
     else if (flags[1] == 'l')
     {
@@ -180,7 +172,7 @@ int main(int argc, char *argv[])
     else
     {
         printf("ls: invalid input -- %s\n", flags);
-        return 1;
+        exit(1);
     }
-    return 0;
+    exit(0);
 }
