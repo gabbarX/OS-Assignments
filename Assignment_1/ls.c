@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
         }
     }
     
-    if (flags[0] == '\0')
+    if (!strcmp(flags, ""))
     {   
         struct dirent **names;
         int n;
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         exit(EXIT_SUCCESS);
 
     }
-    else if (flags[1] == 'a')
+    else if (!strcmp(flags, "-a"))
     {
         struct dirent **names;
         int n;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         printf("\n");
         free(names);
     }
-    else if (flags[1] == '1')
+    else if (!strcmp(flags, "-1"))
     {
         struct dirent **nameList;
         int n;

@@ -87,7 +87,7 @@ void echo(char *input[], int size)
         printf("Usage: echo [SHORT-OPTION]... [STRING]...\n");
         printf("Echo the STRING(s) to standard output.\n");
         printf("  -n\tdo not output the trailing newline\n");
-        printf("  -e\tenable interpretation of backslash escapes\n");
+        printf("  -E\tdisable interpretation of backslash escapes\n");
         printf("  --help\tdisplay this help and exit\n");
     }
     else{
@@ -100,34 +100,40 @@ void echo(char *input[], int size)
 }
 
 void pwd(char *input[], int size)
-{
-    char dir[1000];
-    getcwd(dir, 1000);
-    if(input[1]==NULL){
-        printf("%s\n", dir);
+{   
+    if(size>2){
+        printf("Too many arguments to the command pwd.\n");
     }
-    else if(strcmp(input[1], "--help") == 0){
-        printf("Usage: pwd [OPTION]...\n");
-        printf("Print the name of the current working directory.\n");
-        printf("  --help\tdisplay this help and exit\n");
-    }
-    else if (strcmp(input[1], "-P"))
+    else 
     {
-        char newarr[1024];
-        char *cwd2 = getcwd(newarr, sizeof(newarr));
-        printf("%s\n", cwd2);
-    }
-    else if (strcmp(input[1], "-L"))
-    {
-        char buf[1000];
-        char newarr[1024];
-        char *res = realpath(newarr, buf);
-        char *cwd2 = getcwd(newarr, sizeof(newarr));
-        printf("%s\n", cwd2);
-    }
-    else{
-        printf("pwd: invalid option -- '%s'\n", input[1]);
-        printf("Try 'pwd --help' for more information.\n");
+        char dir[1000];
+        getcwd(dir, 1000);
+        if(input[1]==NULL){
+            printf("%s\n", dir);
+        }
+        else if(strcmp(input[1], "--help") == 0){
+            printf("Usage: pwd [OPTION]...\n");
+            printf("Print the name of the current working directory.\n");
+            printf("  --help\tdisplay this help and exit\n");
+        }
+        else if (strcmp(input[1], "-P"))
+        {
+            char newarr[1024];
+            char *cwd2 = getcwd(newarr, sizeof(newarr));
+            printf("%s\n", cwd2);
+        }
+        else if (strcmp(input[1], "-L"))
+        {
+            char buf[1000];
+            char newarr[1024];
+            char *res = realpath(newarr, buf);
+            char *cwd2 = getcwd(newarr, sizeof(newarr));
+            printf("%s\n", cwd2);
+        }
+        else{
+            printf("pwd: invalid option -- '%s'\n", input[1]);
+            printf("Try 'pwd --help' for more information.\n");
+        }
     }
 }
 
@@ -241,7 +247,7 @@ void cd(char **input)
 
 
 int main(){
-    // printf("Welcome to the shell\n");
+    
     init_shell();
     
     while (true)
@@ -253,12 +259,10 @@ int main(){
         scanf("%[^\n]%*c", rawCommand);
         strcpy(commandCopy, rawCommand);
         
-        //parsing the input
         int size = 0;
         char *token = strtok(rawCommand, " ");
         char **input = (char **)malloc(500 * sizeof(char *));
         
-        //filling the input array
         while (token != NULL)
         {
             input[size] = (char *)malloc(500 * sizeof(char));
@@ -288,7 +292,6 @@ int main(){
             }
         }
 
-        // printf("thread command222 -> %s",threadCommand);
 
         if(isThreadBased && !strcmp(input[0], "rm")){
             pthread_t pid_t;
@@ -313,6 +316,7 @@ int main(){
                 cd(input);
             }
             else if(!strcmp(input[0], "date")){
+            
             pid_t id;
             int statusus;
             if ((id = fork()) == 0)
@@ -327,18 +331,24 @@ int main(){
             }
             }
             else if (!strcmp(input[0], "cat")) {
-                pid_t id;
-                int status;
-                if ((id = fork()) == 0)
-                {
-                    execl("./cat","./cat", commandCopy, input[1]);
-                    exit(EXIT_SUCCESS);
+                if(size==1){
+                    printf("Cat needs more arguments to proceed!\n");
                 }
-                else
-                {
-                    pid_t time;
-                    time = wait(&status);
+                else {
+                    pid_t id;
+                    int status;
+                    if ((id = fork()) == 0)
+                    {
+                        execl("./cat","./cat", commandCopy, input[1]);
+                        exit(EXIT_SUCCESS);
+                    }
+                    else
+                    {
+                        pid_t time;
+                        time = wait(&status);
+                    }
                 }
+                
             }
             else if (!strcmp(input[0], "ls")) {
                 pid_t id;
@@ -355,25 +365,30 @@ int main(){
                 }
             }
             else if (!strcmp(input[0],"mkdir")) {
-                pid_t id;
-                int status;
-                if ((id = fork()) == 0)
-                {
-                    char *args[] = {"./mkdir", commandCopy, NULL};
-                    execl("./mkdir", "./mkdir",commandCopy,NULL);
-                    exit(EXIT_SUCCESS);
+                if(size==1){
+                    printf("mkdir needs more arguments to proceed!\n");
                 }
-                else
-                {
-                    pid_t time;
-                    time = wait(&status);
+                else {
+                    pid_t id;
+                    int status;
+                    if ((id = fork()) == 0)
+                    {
+                        char *args[] = {"./mkdir", commandCopy, NULL};
+                        execl("./mkdir", "./mkdir",commandCopy,NULL);
+                        exit(EXIT_SUCCESS);
+                    }
+                    else
+                    {
+                        pid_t time;
+                        time = wait(&status);
+                    }
                 }
             }
             else if (!strcmp(input[0],"rm")) {
                 pid_t id;
                 int status;
-                if (input[1]==NULL){
-                    printf("rm : missing operand\n");
+                if (size==1){
+                    printf("rm needs more arguments to proceed!\n");
                 }
                 else {
                     if ((id = fork()) == 0)
@@ -390,7 +405,7 @@ int main(){
             }
             else
             {
-                printf("Command not found\n");
+                printf("Command not found!\n");
             }
         }
     }

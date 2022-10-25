@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
         token = strtok(NULL, " ");
     }
 
-    printf("flag - %s\n",flags);
-    printf("fileName - %s\n",fileName);
+    // printf("flag - %s\n",flags);
+    // printf("fileName - %s\n",fileName);
     
     if(!strcmp(flags, ""))
     {
@@ -42,14 +42,15 @@ int main(int argc, char *argv[])
             exit(1);
         }
         else {
-            printf("File has been read! :3\n");
+            // printf("File has been read! :3\n");
+            do {
+                ch = fgetc(ptr);
+                printf("%c",ch);
+            }while (ch!=EOF);
+            printf("\n");
+            fclose(ptr);
         }
-        do {
-            ch = fgetc(ptr);
-            printf("%c",ch);
-        }while (ch!=EOF);
-        printf("\n");
-        fclose(ptr);
+        
     }
     else if (flags[1]=='E') {
         // printf("flag E");
@@ -63,18 +64,18 @@ int main(int argc, char *argv[])
             exit(1);
         }
         else {
-            printf("File has been read! :3\n");
-        }
-        do {
+            do {
             ch = fgetc(ptr);
-            if(ch=='\n'){
+            if(ch=='\n')
+            {
                 printf("$");
             }
-            printf("%c",ch);
-        }while (ch!=EOF);
-        printf("\n");
-        fclose(ptr);
+                printf("%c",ch);
+            }while (ch!=EOF);
 
+            printf("\n");
+            fclose(ptr);
+        }
     }
     else if (flags[1]=='n') {
         // printf("flag n");
@@ -90,25 +91,23 @@ int main(int argc, char *argv[])
             exit(1);
         }
         else {
-            printf("File has been read! :3\n");
+            do {
+                if(ch =='\n'){
+                    count++;
+                    flg = true;
+                }
+                if(flg){
+                    printf("%d ",count);
+                    flg = false;
+                }
+                ch = fgetc(ptr);
+                printf("%c",ch);
+            }while (ch!=EOF);
+            // printf("Number of lines is -> %d",count);
+            printf("\n");
+            fclose(ptr);
         }
-        do {
-            if(ch =='\n'){
-                count++;
-                flg = true;
-            }
-            if(flg){
-                printf("%d ",count);
-                flg = false;
-            }
-            ch = fgetc(ptr);
-            printf("%c",ch);
-        }while (ch!=EOF);
-        // printf("Number of lines is -> %d",count);
-        printf("\n");
-        fclose(ptr);
+        
     }
-
-
     exit(0);
 }
