@@ -16,7 +16,7 @@ char command[100] = "";
 int main(int argc, char *argv[])
 {
     char flags[100] = "";
-    char argument[1000] = "";
+    char dirName[1000] = "";
     bool hasArguments = false;
     char *token = strtok(argv[1], " ");
     strcpy(command, token);
@@ -29,41 +29,41 @@ int main(int argc, char *argv[])
         }
         else
         {
-            strcpy(argument, token);
+            strcpy(dirName, token);
         }
         
         token = strtok(NULL, " ");
         if (token != NULL)
         {
-            strcpy(argument, token);
+            strcpy(dirName, token);
             hasArguments = true;
         }
     }
     
     if (flags[0] == '\0')
     {   
-        struct dirent **nameList;
+        struct dirent **names;
         int n;
         if (!hasArguments)
         {
-            n = scandir(".", &nameList, NULL, alphasort);
+            n = scandir(".", &names, NULL, alphasort);
         }
         else
         {
-            n = scandir(argument, &nameList, NULL, alphasort);
+            n = scandir(dirName, &names, NULL, alphasort);
         }
         for(int i=0;i<n;i++){
-            if (nameList[i]->d_name[0] == '.')
+            if (names[i]->d_name[0] == '.')
             {
-                free(nameList[i]);
+                free(names[i]);
                 continue;
             }
-            printf("%s ", nameList[i]->d_name);
-            free(nameList[i]);
+            printf("%s ", names[i]->d_name);
+            free(names[i]);
         }
 
         printf("\n");
-        free(nameList);
+        free(names);
         exit(EXIT_SUCCESS);
 
     }
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            n = scandir(argument, &names, NULL, alphasort);
+            n = scandir(dirName, &names, NULL, alphasort);
         }
         
         for(int i=0;i<n;i++){
@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
         }
         printf("\n");
         free(names);
-
     }
     else if (flags[1] == '1')
     {
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            n = scandir(argument, &nameList, NULL, alphasort);
+            n = scandir(dirName, &nameList, NULL, alphasort);
         }
         for(int i=0;i<n;i++){
             if (nameList[i]->d_name[0] == '.')

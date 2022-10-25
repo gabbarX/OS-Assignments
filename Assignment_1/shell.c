@@ -148,36 +148,24 @@ void cd(char **input)
     }
     else
     {
-        argMissing = 0;
+        argMissing = true;
     }
     
     if (dash == true)
     {
-        int check = chdir("..");
-        if (check != 0)
-        {
-            perror("An error occured in: ");
-        }
-        else
-        {
-            char cwd2[200];
-            char *cwd32 = getcwd(cwd2, sizeof(cwd2));
-            printf("%s", cwd32);
-        }
+        chdir("..");
+        char cwd2[200];
+        char *cwd32 = getcwd(cwd2, sizeof(cwd2));
+        printf("%s", cwd32);
+    
     }
     else if (consoleKey == true || dashDash == true || argMissing == true)
     {
-        bool check = chdir(getenv("HOME"));
-        if (check == true)
-        {
-            perror("An error occured in: ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
+        chdir(getenv("HOME"));    
+        char cwd[200];
+        char *newPath = getcwd(cwd, sizeof(cwd));
+        printf("%s", newPath);
+
     }
 
     else if (cdHelp == true)
@@ -197,39 +185,19 @@ void cd(char **input)
             char *pt = strtok(cwd, "\n");
             char buf[PATH_MAX];
             char *path = realpath(pt, buf);
-            if (!path)
-            {
-                perror("realpath error:");
-            }
-            else
-            {
-                bool check = chdir(path);
-                printf("physical source directory : %s\n", buf);
-                printf("%s\n", path);
-                if (check == true)
-                {
-                    perror("An error occured in: ");
-                }
-                else
-                {
-                    char temp[200];
-                    char *newCwd = getcwd(temp, sizeof(temp));
-                }
-            }
+            chdir(path);
+            printf("physical source directory : %s\n", buf);
+            printf("%s\n", path);
+            char temp[200];
+            char *newCwd = getcwd(temp, sizeof(temp));
+
         }
         else
         {
-            bool check = chdir(getenv("HOME"));
-            if (check == true)
-            {
-                perror("An error occured in: ");
-            }
-            else
-            {
-                char temp[200];
-                char *newCwd = getcwd(temp, sizeof(temp));
-                printf("%s", newCwd);
-            }
+            chdir(getenv("HOME"));
+            char temp[200];
+            char *newPath = getcwd(temp, sizeof(temp));
+            printf("%s", newPath);
         }
     }
     else if (isCdL == true)
@@ -239,47 +207,27 @@ void cd(char **input)
         char cwd[1024];
         strcpy(cwd, input[2]);
         char *pt = strtok(cwd, "\n");
-        int id = chdir(pt);
-        if (id != 0)
-        {
-            perror("An error occured in: ");
-        }
-        else
-        {
-            char cwd2[200];
-            char *newdir = getcwd(cwd2, sizeof(cwd2));
-            printf("%s", newdir);
-        }
+        chdir(pt);
+        char cwd2[200];
+        char *newPath = getcwd(cwd2, sizeof(cwd2));
+        printf("%s", newPath);
     }
     else
     {
-        bool check = chdir(getenv("HOME"));
-        if (check == true)
-        {
-            perror("An error occured in: ");
-        }
-        else
-        {
-            char cwd[200];
-            char *newcwd = getcwd(cwd, sizeof(cwd));
-            printf("%s", newcwd);
-        }
+        chdir(getenv("HOME"));
+        char cwd[200];
+        char *newPath = getcwd(cwd, sizeof(cwd));
+        printf("%s", newPath);
+
     }
     }
     else
     {
         char *pt = strtok(cwd_inputnew1, "\n");
-        bool check = chdir(pt);
-        if (check == true)
-        {
-            perror("An error occured in: ");
-        }
-        else
-        {
-            char cwd[200];
-            char *cwd3 = getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd3);
-        }
+        chdir(pt);
+        char cwd[200];
+        char *newPath = getcwd(cwd, sizeof(cwd));
+        printf("%s", newPath);
     }
 }
 
