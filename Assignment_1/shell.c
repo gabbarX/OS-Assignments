@@ -119,11 +119,6 @@ void pwd(char *input[], int size)
 }
 
 
-// void cdL(char **input)
-// {
-
-// }
-
 void cd(char **input)
 {
     bool consoleKey = false;
