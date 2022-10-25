@@ -59,14 +59,27 @@ void echo(char *input[], int size)
     //implmenting the echo accourding to the type
     if(echoN){
         for(int i = 2; i < size; i++)
-        {
+        {   
             printf("%s ", input[i]);
         }
     }
     else if(echoE){
         for(int i = 2; i < size; i++)
-        {
-            printf("%s ", input[i]);
+        {   
+            
+            if(!strcmp(input[i], "\\")){
+                printf("\\");
+            }
+            if(!strcmp(input[i], "\n")){
+                printf("\n");
+            }
+            if(!strcmp(input[i], "\t"))
+            {
+                printf("\t");
+            }
+            else {
+                printf("%s ", input[i]);
+            }
         }
         printf("\n");
     }
