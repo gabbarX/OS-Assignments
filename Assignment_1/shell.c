@@ -363,7 +363,7 @@ int main(){
             {
                 char *args[] = {"./date", commandCopy, NULL};
                 execvp("./date", args);
-                exit(0);
+                exit(EXIT_SUCCESS);
             }
             else
             {
@@ -378,7 +378,7 @@ int main(){
                 {
                     char *args[] = {"./cat", commandCopy, input[1]};
                     execvp("./cat", args);
-                    exit(0);
+                    exit(EXIT_SUCCESS);
                 }
                 else
                 {
@@ -393,7 +393,7 @@ int main(){
                 {
                     char *args[] = {"./ls", commandCopy, NULL};
                     execvp("./ls", args);
-                    exit(0);
+                    exit(EXIT_SUCCESS);
                 }
                 else
                 {
@@ -408,7 +408,7 @@ int main(){
                 {
                     char *args[] = {"./mkdir", commandCopy, NULL};
                     execvp("./mkdir", args);
-                    exit(0);
+                    exit(EXIT_SUCCESS);
                 }
                 else
                 {
@@ -427,7 +427,7 @@ int main(){
                     {
                         char *args[] = {"./rm", commandCopy, NULL};
                         execvp("./rm", args);
-                        exit(0);
+                        exit(EXIT_SUCCESS);
                     }
                     else
                     {

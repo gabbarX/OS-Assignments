@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
                 perror("close");
                 exit(1);
             }
-            exit(0);
+            exit(EXIT_SUCCESS);
         }
         else if (flags[1] == 'E')
         {
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
                 perror("close");
                 exit(EXIT_FAILURE);
             }
-            exit(0);
+            exit(EXIT_SUCCESS);
         }
         else
         {
@@ -164,5 +164,5 @@ int main(int argc, char *argv[])
         printf("\n");
         token = strtok(NULL, " ");
     }
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
