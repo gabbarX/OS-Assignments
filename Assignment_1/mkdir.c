@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 
 int main(int argc, char *argv[])
@@ -24,22 +23,18 @@ int main(int argc, char *argv[])
         strcpy(toMk, token);
         if (flags[0] == '\0')
         {
-            if(mkdir(toMk, 0777) == -1)
-            {
-                perror(toMk);
-            }
+            mkdir(toMk, 0777);
         }
         else
         {
             if (flags[1] == 'v')
             {
-                if (mkdir(toMk, 0777) == -1)
-                {
-                    perror(toMk);
+                int check = mkdir(toMk, 0777);
+                if(check <0){
+                    printf("Directory not created!");
                 }
-                else
-                {
-                    printf("mkdir: directory '%s' successfully created!\n", toMk);
+                else {
+                    printf("Directory successfully created");
                 }
             }
             else if (flags[1] == 'm' && flags[2] == '=')
@@ -63,9 +58,12 @@ int main(int argc, char *argv[])
                         printf("Invalid mode '%d' entered \n", mode);
                         return 1;
                     }
-                    if (mkdir(toMk, mode) == -1)
-                    {
-                        perror(toMk);
+                    int check = mkdir(toMk, mode);
+                    if(check <0){
+                    printf("Directory not created!");
+                    }
+                    else {
+                        printf("Directory successfully created");
                     }
                 }
                 else
@@ -81,11 +79,14 @@ int main(int argc, char *argv[])
                         printf("Invalid mode '%d' entered \n", mode);
                         return 1;
                     }
-                    if (mkdir(toMk, mode) == -1)
-                    {
-                        perror(toMk);
+                    int check = mkdir(toMk, mode);
+                    if(check <0){
+                    printf("Directory not created!");
                     }
-                }
+                    else {
+                        printf("Directory successfully created");
+                    }
+                    }
             }
             else
             {
