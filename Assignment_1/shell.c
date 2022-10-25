@@ -47,7 +47,7 @@ void echo(char *input[], int size)
     {
         echoN = true;
     }
-    else if(strcmp(input[1], "-e") == 0)
+    else if(strcmp(input[1], "-E") == 0)
     {
         echoE = true;
     }
