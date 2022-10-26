@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
         
     }
     else if (flags[1]=='E') {
-        // printf("flag E");
 
         FILE* ptr;
         char ch;

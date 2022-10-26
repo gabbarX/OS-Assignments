@@ -1,3 +1,4 @@
+#include <asm-generic/errno.h>
 #include <linux/limits.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,7 +37,7 @@ void* thread_rm(void* arg){
     return 0;
 }
 
-void echo(char *input[], int size)
+void echo(char *input[], int size, char commandCopy[])
 {
     bool echoN = false;
     bool echoE = false;
@@ -65,21 +66,8 @@ void echo(char *input[], int size)
     }
     else if(echoE){
         for(int i = 2; i < size; i++)
-        {   
-            
-            if(!strcmp(input[i], "\\")){
-                printf("\\");
-            }
-            if(!strcmp(input[i], "\n")){
-                printf("\n");
-            }
-            if(!strcmp(input[i], "\t"))
-            {
-                printf("\t");
-            }
-            else {
-                printf("%s ", input[i]);
-            }
+        {         
+            printf("%s ", input[i]);
         }
         printf("\n");
     }
@@ -87,13 +75,15 @@ void echo(char *input[], int size)
         printf("Usage: echo [SHORT-OPTION]... [STRING]...\n");
         printf("Echo the STRING(s) to standard output.\n");
         printf("  -n\tdo not output the trailing newline\n");
-        printf("  -E\tdisable interpretation of backslash escapes\n");
+        printf("  -E\tdisables interpretation of backslash escapes\n");
         printf("  --help\tdisplay this help and exit\n");
     }
     else{
-        for(int i = 1; i < size; i++)
+        // printf("haha");
+        for(int i = 5; i < strlen(commandCopy); i++)
         {
-            printf("%s ", input[i]);
+            // echo 
+            printf("%c", commandCopy[i]);
         }
         printf("\n");
     }
@@ -257,6 +247,7 @@ int main(){
         bool isThreadBased=false;
         printf(">> ");
         scanf("%[^\n]%*c", rawCommand);
+        // fgets(rawCommand, 100, stdin);
         strcpy(commandCopy, rawCommand);
         
         int size = 0;
@@ -309,7 +300,7 @@ int main(){
             }
             else if (!strcmp(input[0], "echo"))
             {
-                echo(input,size);
+                echo(input,size,commandCopy);
             }
             else if (!strcmp(input[0], "cd"))
             {
