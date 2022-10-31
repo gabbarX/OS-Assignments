@@ -28,12 +28,78 @@ void init_shell()
 
 void* thread_rm(void* arg){
     // input[0]
+    char initialcommand[200]="";
     char temp[200]="";
+    strcpy(initialcommand, (char*)arg);
     // printf("haha mai thread hu\n");
     char rm_path[1024]= "./rm";
-    // printf("command going to system()->%s",(char*) arg);
     // system(strcat("./rm ",(char*)arg));
-    system((char*)arg);
+    // printf("thread based size: %s")
+
+    char *token = strtok((char*)arg, " ");
+
+    // printf("command going to system()->%s",token);
+    char **threadInput = (char **)malloc(500 * sizeof(char *));
+    // system((char*)arg);
+    int size=0;
+    while (token != NULL)
+        {
+            threadInput[size] = (char *)malloc(500 * sizeof(char));
+            strcpy(threadInput[size], token);
+            token = strtok(NULL, " ");
+            size++;
+        }
+    
+    // for(int i=0;i<size;i++){
+    //     printf("$$ %s",threadInput[i]);
+    // }
+
+    if(!strcmp(threadInput[0], "cat")){
+        // printf("cat hu re bawa!");
+        char temp[200]="";
+        char initcommand[200] = "./cat ";
+        for(int i =1; i<size;i++){
+            strcat(initcommand, threadInput[i]);
+        }
+        system(initialcommand);
+    }
+    else if (!strcmp(threadInput[0], "date")) {
+        char temp[200]="";
+        char initcommand[200] = "./date ";
+        for(int i =1; i<size;i++){
+            strcat(initcommand, threadInput[i]);
+        }
+        system(initialcommand);
+    }
+    else if (!strcmp(threadInput[0], "ls")) {
+        char temp[200]="";
+        char initcommand[200] = "./ls ";
+        for(int i =1; i<size;i++){
+            strcat(initcommand, threadInput[i]);
+        }
+        system(initialcommand);
+    
+    }
+    else if (!strcmp(threadInput[0], "mkdir")) {
+        char temp[200]="";
+        char initcommand[200] = "./mkdir ";
+        for(int i =1; i<size;i++){
+            strcat(initcommand, threadInput[i]);
+        }
+        system(initialcommand);
+    }
+    else if (!strcmp(threadInput[0], "rm")) {
+        char temp[200]="";
+        char initcommand[200] = "./rm ";
+        for(int i =1; i<size;i++){
+            strcat(initcommand, threadInput[i]);
+        }
+        system(initialcommand);
+    
+    }
+    else {
+    printf("Syntax Error!\n");
+    }
     return 0;
 }
 
@@ -284,7 +350,7 @@ int main(){
         }
 
 
-        if(isThreadBased && !strcmp(input[0], "rm")){
+        if(isThreadBased){
             pthread_t pid_t;
             pthread_create(&pid_t,NULL, thread_rm ,(void*) threadCommand);
             pthread_join(pid_t, NULL);
