@@ -46,32 +46,34 @@ int main(void)
 
     struct sched_param paramB;
     int policyB = SCHED_RR;
-    // paramB.sched_priority = 0;
+    paramB.sched_priority = 1;
     // int priority = 0;
 
 
 
     struct sched_param paramC;
     int policyC = SCHED_FIFO;
-    // paramC.sched_priority = 0;
+    paramC.sched_priority = 1;
     // int priority = 0;
 
+
+   
+    int cta = pthread_create(&threadAid, NULL, threadA, (void *)&threadAid);
+    if(cta==0){
+        printf("ThreadA created successfully.\n");
+    }
+    else{
+        perror("Error");
+    }
 
     int ta = pthread_setschedparam(threadAid, policyA, &paramA);
     if(ta==0){
         printf("Successfully initialised the policy and priority for thread A.\n");
     }
     else{
-        perror("Error: ");
+        perror("Error");
     }
 
-    int cta = pthread_create(&threadAid, NULL, threadA, (void *)&threadAid);
-    if(cta==0){
-        printf("ThreadA created successfully.\n");
-    }
-    else{
-        perror("Error: ");
-    }
 
     pthread_join(threadAid, NULL);
     // clock_gettime();
@@ -80,25 +82,33 @@ int main(void)
 
 
     pthread_create(&threadBid, NULL, threadB, (void *)&threadBid);
-    int tb = pthread_setschedparam(threadBid, policyB, &paramB);
-    if(tb==0){
-        printf("Successfully initialised the policy and priority for thread B.\n");
-    }
-    else{
-        perror("Error: ");
-    }
     
     int ctb = pthread_create(&threadBid, NULL, threadB, (void *)&threadBid);
     if(ctb==0){
         printf("ThreadB created successfully.\n");
     }
     else{
-        perror("Error: ");
+        perror("Error");
+    }
+    int tb = pthread_setschedparam(threadBid, policyB, &paramB);
+    if(tb==0){
+        printf("Successfully initialised the policy and priority for thread B.\n");
+    }
+    else{
+        perror("Error");
     }
     
     pthread_join(threadBid, NULL);
     // clock_gettime();
     
+
+    int ctc = pthread_create(&threadCid, NULL, threadC, (void *)&threadCid);
+    if(ctc==0){
+        printf("ThreadC created successfully.\n");
+    }
+    else{
+        perror("Error");
+    }
 
 
     int tc = pthread_setschedparam(threadCid, policyC, &paramC);
@@ -106,17 +116,11 @@ int main(void)
         printf("Successfully initialised the policy and priority for thread A.\n");
     }
     else{
-        perror("Error: ");
+        perror("Error");
     }
     
-    int ctc = pthread_create(&threadCid, NULL, threadC, (void *)&threadCid);
-    if(ctc==0){
-        printf("ThreadC created successfully.\n");
-    }
-    else{
-        perror("Error: ");
-    }
-    
+
+
     pthread_join(threadCid, NULL);
     // clock_gettime();
 
