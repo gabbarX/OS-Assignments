@@ -1,5 +1,5 @@
 #include <linux/kernel.h>
-#include <sys/syscalls.h>
+#include <sys/syscall.h>
 
 SYSCALL_DEFINE3(onedcopy, int*, src, int*, dest, int, len)
 {
