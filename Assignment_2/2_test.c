@@ -12,7 +12,7 @@ int main()
     int arr1[3][3] = {{1,2,3},{1,2,3},{1,2,3}};
     int testArr[3][3];
 
-    sys_call_status = syscall(kernel_2d_memcpy,arr1,&testArr,3,3);
+    sys_call_status = syscall(kernel_2d_memcpy,arr1,testArr,3,3);
 
     if (sys_call_status != EFAULT)
     {
