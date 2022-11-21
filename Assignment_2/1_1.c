@@ -75,7 +75,6 @@ int main(void)
     }
 
 
-    pthread_join(threadAid, NULL);
     // clock_gettime();
 
 
@@ -98,7 +97,6 @@ int main(void)
         perror("Error");
     }
     
-    pthread_join(threadBid, NULL);
     // clock_gettime();
     
 
@@ -121,6 +119,8 @@ int main(void)
     
 
 
+    pthread_join(threadAid, NULL);
+    pthread_join(threadBid, NULL);
     pthread_join(threadCid, NULL);
     // clock_gettime();
 
