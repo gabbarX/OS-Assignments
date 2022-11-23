@@ -1,0 +1,1 @@
+cmd_kernel_2d_memcpy_syscall/built-in.a := rm -f kernel_2d_memcpy_syscall/built-in.a;  printf "kernel_2d_memcpy_syscall/%s " kernel_2d_memcpy_syscall.o | xargs ar cDPrST kernel_2d_memcpy_syscall/built-in.a
