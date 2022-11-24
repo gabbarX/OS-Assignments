@@ -6,9 +6,13 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define BILLION  1000000000L;
+#define BILLION  1000000000.0
 
 double result[6][3];
+
+int Apriority=18;
+int Bpriority=18;
+int Cpriority=18;
 
 void* threadA(void *vargp){
 
@@ -21,7 +25,7 @@ void* threadA(void *vargp){
     // Priority and policy stuff
     struct sched_param paramA;
     int policyA = SCHED_OTHER;
-    paramA.sched_priority = 0;
+    paramA.sched_priority = Apriority;
     // int priority = 0;
 
     int ta = pthread_setschedparam(pthread_self(), policyA, &paramA);
@@ -62,7 +66,7 @@ void* threadB(void *vargp){
 
     struct sched_param paramB;
     int policyB = SCHED_RR;
-    paramB.sched_priority = 1;
+    paramB.sched_priority = Bpriority;
     // int priority = 0;
 
     int tb = pthread_setschedparam(pthread_self(), policyB, &paramB);
@@ -102,10 +106,9 @@ void* threadC(void *vargp){
     double accum;
     clock_gettime( CLOCK_REALTIME, &start);
 
-
     struct sched_param paramC;
     int policyC = SCHED_FIFO;
-    paramC.sched_priority = 1;
+    paramC.sched_priority = Cpriority;
     // int priority = 0;
 
     int tc = pthread_setschedparam(pthread_self(), policyC, &paramC);
