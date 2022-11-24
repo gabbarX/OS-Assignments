@@ -1,66 +1,108 @@
-#include <asm-generic/errno.h>
-#include <linux/limits.h>
 #include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <limits.h>
-#include <stdbool.h>
 #include <sys/wait.h>
-#include <pthread.h>
+#include <string.h>
+#include<unistd.h>
+#include <time.h>
+#include <sched.h>
 
-#define BILLION  1000000000L;
+#define BILLION  1000000000.0
+
 
 int main(void)
 {
 
     pid_t idA,idB,idC;
     int statusA;
-
-    struct timespec startA, stopA;
-    double accumA;
-    clock_gettime( CLOCK_REALTIME, &startA);
     if ((idA = fork()) == 0)
-    {
-        execl("/bin/bash","sh","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
-        clock_gettime( CLOCK_REALTIME, &stopA);
-        accumA = ( stopA.tv_sec - startA.tv_sec ) + ( stopA.tv_nsec - startA.tv_nsec )/ BILLION;
-        printf( "A --> %lf\n", accumA );
-        exit(EXIT_SUCCESS);
+    { 
+        int rc = fork();
+        struct timespec start, end;
+        struct sched_param paramA;
+        paramA.sched_priority = 0;
+        double processTime;
+        sched_setscheduler(getpid(), SCHED_OTHER, &paramA);
+        clock_gettime(CLOCK_REALTIME, &start);
+        if (rc == 0)
+        {
+            execl("/bin/bash","bash","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
+        }
+        else if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);    
+        }
+        else
+        {
+            wait(NULL);
+            clock_gettime(CLOCK_REALTIME, &end);
+            processTime = (end.tv_sec - start.tv_sec)  + (end.tv_nsec - start.tv_nsec) / BILLION;
+            printf("A-processTime %lf \n", processTime);
+        }
 
     }
     else
     {   
-        struct timespec startB, stopB;
-        double accumB;
-        if ((idB = fork()) == 0)
+
+    int rc2 = fork();
+    if (rc2 == 0)
+    {
+        int rc = fork();
+        struct sched_param paramB;
+        paramB.sched_priority = 1;
+        double processTime;
+        sched_setscheduler(getpid(), SCHED_FIFO, &paramB);
+        struct timespec start, end;
+        clock_gettime(CLOCK_REALTIME, &start);
+        if (rc == 0)
         {
-            execl("/bin/bash","sh","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
-            clock_gettime( CLOCK_REALTIME, &stopB);
-            accumB = ( stopB.tv_sec - startB.tv_sec ) + ( stopB.tv_nsec - startB.tv_nsec )/ BILLION;
-            printf( "B --> %lf\n", accumB );
-            exit(EXIT_SUCCESS);
-        }
+            execl("/bin/sh","sh","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
+        } 
+        else if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);    
+        } 
         else
-        {   
-            struct timespec startC, stopC;
-            double accumC;
-            if ((idC = fork()) == 0)
-            {
-                execl("/bin/bash","sh","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
-                clock_gettime( CLOCK_REALTIME, &stopC);
-                accumC = ( stopC.tv_sec - startC.tv_sec ) + ( stopC.tv_nsec - startC.tv_nsec )/ BILLION;
-                printf( "C --> %lf\n", accumC );
-                exit(EXIT_SUCCESS);
-            }
-            else
-            {   
-                wait(NULL);
-            }
+        {
+            wait(NULL);
+            clock_gettime(CLOCK_REALTIME, &end);
+            processTime = (end.tv_sec - start.tv_sec)  + (end.tv_nsec - start.tv_nsec) / BILLION;
+            printf("B-processTime %lf \n", processTime);
         }
-
+    } 
+    else
+    {
+        int rc3 = fork();
+        if (rc3 == 0)
+        {
+            int rc = fork();
+            struct timespec start, end;
+            struct sched_param paramC;
+            paramC.sched_priority = 1;
+            int statusC;
+            double processTime;
+            sched_setscheduler(getpid(), SCHED_RR, &paramC);
+            clock_gettime(CLOCK_REALTIME, &start);
+            if (rc == 0)
+            {
+                execl("/bin/sh","sh","/home/ankitg/Desktop/coding_stuff/OS-Assignments/Assignment_2/test.sh",NULL);
+            }
+            else if(rc < 0)
+            {
+                fprintf(stderr, "fork failed\n");
+                exit(1);    
+            } 
+            else
+            {
+                wait(NULL);
+                clock_gettime(CLOCK_REALTIME, &end);
+                processTime = (end.tv_sec - start.tv_sec)  + (end.tv_nsec - start.tv_nsec) / BILLION;
+                printf("C-processTime %lf \n", processTime);
+            }       
+        }
+        wait(NULL);
     }
-
-
-
+    wait(NULL);
+    }
 }
