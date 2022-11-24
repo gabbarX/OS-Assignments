@@ -2,10 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 #include <unistd.h>
 #include <errno.h>
 
+#define BILLION  1000000000L;
+
+double result[6][3];
+
 void* threadA(void *vargp){
+
+    // Time Stuff
+    struct timespec start, stop;
+    double accum;
+    clock_gettime( CLOCK_REALTIME, &start);
+
+
+    // Priority and policy stuff
     struct sched_param paramA;
     int policyA = SCHED_OTHER;
     paramA.sched_priority = 0;
@@ -20,16 +33,31 @@ void* threadA(void *vargp){
         perror("Error");
     }
 
-
     long long int i=1;
+    // clock_gettime();
+    // printf("%lld\n\n",4294967296);
     printf("Hello threadA reporting sir.\n");
-    while (i<=pow(2,32)) 
+    long long int count = 1;
+    while (i<=4294967296) 
     {
+        // printf("%lld " ,i);
+        count++;
         i++;
+
     }
+
+    clock_gettime( CLOCK_REALTIME, &stop);
+    accum = ( stop.tv_sec - start.tv_sec ) + ( stop.tv_nsec - start.tv_nsec )/ BILLION;
+    // printf( "A --> %lf\n", accum );
+    result[0][0] = accum;
 }
 
 void* threadB(void *vargp){
+
+    // Time Stuff
+    struct timespec start, stop;
+    double accum;
+    clock_gettime( CLOCK_REALTIME, &start);
 
 
     struct sched_param paramB;
@@ -48,15 +76,32 @@ void* threadB(void *vargp){
         
     long long int i=1;
     printf("Hello threadB reporting sir.\n");
-    while (i<=pow(2,32)) 
+
+    // clock_gettime();
+    long long int count = 1;
+    while (i<=4294967296) 
     {
+        // printf("%lld ",i);
+        count++;
         i++;
     }
     // printf("Thread B complete.\n");
+
+
+    clock_gettime( CLOCK_REALTIME, &stop);
+    accum = ( stop.tv_sec - start.tv_sec ) + ( stop.tv_nsec - start.tv_nsec )/ BILLION;
+    // printf( "B --> %lf\n", accum );
+    result[0][1] = accum;
     
 }
 
 void* threadC(void *vargp){
+
+    // Time stuff
+    struct timespec start, stop;
+    double accum;
+    clock_gettime( CLOCK_REALTIME, &start);
+
 
     struct sched_param paramC;
     int policyC = SCHED_FIFO;
@@ -75,10 +120,21 @@ void* threadC(void *vargp){
 
     long long int i=1;
     printf("Hello threadC reporting sir.\n");
-    while (i<=pow(2,32)) 
-    {
+
+    // clock_gettime();
+    long long int count = 1;
+    while (i<=4294967296) 
+    {   
+        // printf("%lld ",i);
+        count++;
         i++;
     }
+
+
+    clock_gettime( CLOCK_REALTIME, &stop);
+    accum = ( stop.tv_sec - start.tv_sec ) + ( stop.tv_nsec - start.tv_nsec )/ BILLION;
+    // printf( "C --> %lf\n", accum );
+    result[0][2] = accum;
 }
 
 int main(void)
@@ -96,14 +152,6 @@ int main(void)
         perror("Error");
     }
 
-
-
-    // clock_gettime();
-
-
-
-
-    pthread_create(&threadBid, NULL, threadB, (void *)&threadBid);
     
     int ctb = pthread_create(&threadBid, NULL, threadB, (void *)&threadBid);
     if(ctb==0){
@@ -127,5 +175,7 @@ int main(void)
     pthread_join(threadBid, NULL);
     pthread_join(threadCid, NULL);
     // clock_gettime();
+
+    printf("Time for A: %lf\nTime for B: %lf\nTime for C: %lf\n",result[0][0],result[0][1],result[0][2]);
 
 }
