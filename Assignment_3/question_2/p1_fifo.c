@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #define MAX_LEN 50
-#define FIFO_NAME "hehe"
+#define FIFO_NAME "haha2"
 #define NUM_STRINGS 50
 #define GROUP_SIZE 5
 
@@ -20,6 +20,7 @@ int main()
     int acknowledged_id = -1;
 
     // Generate the random strings and store them in the 'strings' array
+    printf("Generating random strings\n");
     for (int i = 0; i < NUM_STRINGS; i++)
     {
         strings[i] = malloc(MAX_LEN + 1);
@@ -31,8 +32,11 @@ int main()
     }
 
     // Create the FIFO if it doesn't exist
+    printf("Trying to access fifo named %s in the memory!\n",FIFO_NAME);
     if (access(FIFO_NAME, F_OK) == -1)
     {
+        printf("Fifo %s does not exists in the memory!\n", FIFO_NAME);
+        printf("Now, Creating fifo %s in the memory!\n", FIFO_NAME);
         if (mkfifo(FIFO_NAME, 0666) < 0)
         {
             perror("mkfifo");
@@ -41,19 +45,25 @@ int main()
     }
 
     // Open the FIFO for writing
+    printf("Opening fifo in write only mode!\n");
     fd = open(FIFO_NAME, O_WRONLY);
     if (fd < 0)
     {
         perror("open");
         exit(1);
     }
+    else{
+        printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
+    }
+
 
     // Send the strings in groups of 5 to P2
+    printf("Sending strings to fifo!\n");
     int k = 0;
     while (k < NUM_STRINGS)
     {
         // Send the strings
-        for (j = 0; j < GROUP_SIZE && k < NUM_STRINGS; j++, k++)
+        for (int j = 0; j < GROUP_SIZE && k < NUM_STRINGS; j++, k++)
         {
             sprintf(buf, "%d:%s", k, strings[k]);
             write(fd, buf, strlen(buf));
