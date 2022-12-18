@@ -35,6 +35,7 @@ void *philosopher(void *arg)
         {
         // Do nothing
         }
+        
         forks[(id + 1) % NUM_FORKS] = 1;
         printf("Philosopher %d picked up right fork.\n", id);
 
