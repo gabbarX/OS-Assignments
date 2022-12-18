@@ -1,11 +1,9 @@
 //Modified Dining philosophers Problem using semaphores
-
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdio.h>
 
 #define NUM_PHILOSOPHERS 5
-
 sem_t forks[NUM_PHILOSOPHERS];
 
 void *philosopher(void *arg) 
@@ -15,7 +13,8 @@ void *philosopher(void *arg)
     while (1) 
     {
         printf("Philosopher %d is thinking.\n", id);
-        sleep(1); // simulate thinking
+        //Thinking
+        sleep(1);
 
         // pick up left fork
         sem_wait(&forks[id]);
@@ -26,7 +25,8 @@ void *philosopher(void *arg)
         printf("Philosopher %d picked up right fork.\n", id);
 
         printf("Philosopher %d is eating.\n", id);
-        sleep(1); // simulate eating
+        //Thinking
+        sleep(1);
 
         // put down left fork
         sem_post(&forks[id]);
@@ -37,11 +37,10 @@ void *philosopher(void *arg)
         printf("Philosopher %d put down right fork.\n", id);
 
     }
-
     return NULL;
 }
 
-int main(int argc, char *argv[]) 
+int main(void) 
 {
     pthread_t philosophers[NUM_PHILOSOPHERS];
     int ids[NUM_PHILOSOPHERS];
@@ -65,5 +64,4 @@ int main(int argc, char *argv[])
         pthread_join(philosophers[i], NULL);
     }
 
-    return 0;
 }
