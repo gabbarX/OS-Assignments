@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 
-#define SHM_NAME "shmfile"
+#define SHM_NAME "shmfile2"
 
 int main()
 {   
