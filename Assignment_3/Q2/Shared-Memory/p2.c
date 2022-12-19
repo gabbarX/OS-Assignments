@@ -1,54 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/ipc.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <stdbool.h>
 
-#define SHM_SIZE 1024  // size of shared memory in bytes
-#define STR_LEN 16  // length of strings in array
-#define NUM_STRINGS 50  // number of strings in array
-#define GROUP_SIZE 5  // number of strings in each group
+
+#define SHM_NAME "shmfile"
 
 int main()
-{
+{   
+    int STR_LEN = 5;
+    int NUM_STRINGS = 50;
+    int GROUP_SIZE = 5;
+    // sleep(5);
+    // key_t key = ftok(SHM_NAME,65);
+    // int shmid = shmget(key,1024,0666|IPC_CREAT);
+    // char *str = (char*) shmat(shmid,(void*)0,0);
+    int fd = shm_open(SHM_NAME, O_RDONLY, 0666);
 
-    sleep(5);
-    // create shared memory segment
-    key_t key = ftok("shmfile",65);
-    int shmid = shmget(key,SHM_SIZE,0666|IPC_CREAT);
 
-    // attach shared memory to process
-    char *str = (char*) shmat(shmid,(void*)0,0);
-
-    while (1)
+    int highest_id = -1;
+    while (true) 
     {
-        // receive group of strings and ID's from P1
-        char group[GROUP_SIZE][STR_LEN];
-        int id[GROUP_SIZE];
-        memcpy(group, str, GROUP_SIZE*STR_LEN*sizeof(char));
-        memcpy(id, str + GROUP_SIZE*STR_LEN*sizeof(char), GROUP_SIZE*sizeof(int));
-
-        // print received strings and ID's
-        for (int i = 0; i < GROUP_SIZE; i++)
+    char buffer[STR_LEN];
+    int id;
+    while (read(fd, buffer, STR_LEN) > 0) 
+    {
+        sscanf(buffer, "%d %s", &id, buffer);
+        printf("Received string with ID %d: %s\n", id, buffer);
+        if (id > highest_id) 
         {
-            printf("Received string with ID %d: %s\n", id[i], group[i]);
+        highest_id = id;
         }
-
-        // send highest ID back to P1 to acknowledge receipt
-        int max_id = id[0];
-        for (int i = 1; i < GROUP_SIZE; i++)
-        {
-            if (id[i] > max_id)
-            {
-                max_id = id[i];
-            }
-        }
-        memcpy(str, &max_id, sizeof(int));
+        id++;
+    }
+        // printf("Highest ID: %d\n",highest_id);
     }
 
-    // detach shared memory segment
-    shmdt(str);
-
+    // shmdt(str);
+    close(fd);
     return 0;
 }

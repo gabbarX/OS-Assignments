@@ -4,6 +4,10 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
+#define SHM_NAME "shmfile"
 
 int main()
 {   
@@ -11,6 +15,9 @@ int main()
     int maxlen = 5;
     int stringNum = 50;
     int groupSize = 5;
+    int acknowledged_id = -1;
+    int group = 5;
+    char buf[maxlen];
 
     char strings[stringNum][maxlen];
     for (int i = 0; i < stringNum; i++) {
@@ -20,48 +27,33 @@ int main()
         strings[i][maxlen]='\0';
     }
 
-    printf("Creating shared memory segment!");
-    key_t key = ftok("/tmp", 'S');
-    int shm_id = shmget(key, stringNum * maxlen, IPC_CREAT | 0666);
-    if (shm_id == -1) {
-        perror("shmget");
+    printf("Creating shared memory segment!\n");
+    int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (fd == -1) {
+        perror("shm_open");
         return 1;
     }
     else{
-        printf("Shared memory segment created succesfully!\n");
-    }
-    // sleep(2);
-
-    printf("Attaching to shared memory!\n");
-    char* shm_ptr = (char*) shmat(shm_id, NULL, 0);
-    if (shm_ptr == (char*)-1) {
-        perror("shmat");
-        return 1;
-    }
-    else{
-        printf("Successfully attached to the shared memory!\n");
+        printf("Shared Memory initialised successfully!\n");
     }
 
-
-    int id = 0;
-    while (id < stringNum) 
+    int k = 0;
+    while (k < stringNum)
     {
-        for (int i = 0; i < groupSize; i++) {
-            memcpy(shm_ptr + i * maxlen, strings[id + i], maxlen);
+        for (int j = 0; j < group && k < stringNum; j++, k++)
+        {
+            sprintf(buf, "%s",strings[k]);
+            write(fd, buf, strlen(buf));
         }
 
-        *((int*) shm_ptr + groupSize * maxlen) = id;
+        int num_read = read(fd, buf, maxlen);
+        buf[num_read] = '\0';
+        sscanf(buf, "%d", &acknowledged_id);
 
-        id = *((int*) shm_ptr + (groupSize + 1) * maxlen);
     }
+    
+    close(fd);
 
-    if (shmdt(shm_ptr) == -1) {
-        perror("shmdt");
-        return 1;
-    }
-    else{
-        printf("Successfully detached from shared memory!\n");
-    }
 
     return 0;
 }
