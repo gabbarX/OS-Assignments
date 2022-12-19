@@ -5,56 +5,53 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#define SOCKET_NAME "/tmp/socket"
-#define MAX_STR_LEN 10
-#define NUM_STRINGS 50
-#define STRINGS_PER_PACKET 5
+#define SOCKET_NAME "/tmp/socket1"
 
-int main(int argc, char** argv) {
+int main() 
+{
+  int maxlen = 5;
+  int stringNum = 50;
+  int packetNum = 5;
+
   int sockfd;
   struct sockaddr_un server_addr;
 
-  // Create socket
   sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
   if (sockfd < 0) {
     perror("Error creating socket");
     exit(1);
   }
 
-  // Set up server address
   memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sun_family = AF_UNIX;
   strcpy(server_addr.sun_path, SOCKET_NAME);
 
-  // Connect to server
   if (connect(sockfd, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
     perror("Error connecting to server");
     exit(1);
   }
 
-  // Generate array of random strings
-  char strings[NUM_STRINGS][MAX_STR_LEN + 1];
-  for (int i = 0; i < NUM_STRINGS; i++) {
-    for (int j = 0; j < MAX_STR_LEN; j++) {
-      strings[i][j] = 'A' + rand() % 26;
+  char strings[stringNum][maxlen + 1];
+  for (int i = 0; i < stringNum; i++) {
+    for (int j = 0; j < maxlen; j++) {
+      strings[i][j] = 'a' + rand() % 26;
     }
-    strings[i][MAX_STR_LEN] = '\0';
+    strings[i][maxlen] = '\0';
   }
 
   int next_id = 0;
-  while (next_id < NUM_STRINGS) {
-    // Send a group of five strings to the server
-    for (int i = 0; i < STRINGS_PER_PACKET; i++) {
+  while (next_id < stringNum) 
+  {
+    for (int i = 0; i < packetNum; i++) {
       int id = next_id + i;
-      if (id >= NUM_STRINGS) 
+      if (id >= stringNum) 
       {
         break;
       }
       send(sockfd, &id, sizeof(int), 0);
-      send(sockfd, strings[id], MAX_STR_LEN + 1, 0);
+      send(sockfd, strings[id], maxlen + 1, 0);
     }
 
-    // Wait for acknowledgement from the server
     int acknowledged_id;
     recv(sockfd, &acknowledged_id, sizeof(int), 0);
     printf("Received acknowledgement for ID %d\n", acknowledged_id);

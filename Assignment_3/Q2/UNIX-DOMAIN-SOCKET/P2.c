@@ -6,9 +6,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#define MAX_STR_LEN 50  // maximum length of each string
+
+#define MAX_STR_LEN 5  // maximum length of each string
 #define NUM_STRINGS 5   // number of strings to receive at a time
-#define SOCKET_NAME "p2_socket"  // name of the unix domain socket
+#define SOCKET_NAME "/tmp/socket1"  // name of the unix domain socket
 
 int main()
 {
