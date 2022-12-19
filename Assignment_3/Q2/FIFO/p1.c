@@ -6,28 +6,29 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define MAX_LEN 50
+
 #define FIFO_NAME "haha2"
-#define NUM_STRINGS 50
-#define GROUP_SIZE 5
 
 int main()
 {
-    int fd;
-    char *strings[NUM_STRINGS];
-    char buf[MAX_LEN + 1];
+
+    int maxlen = 5;
+    int StringNum = 50;
+    int group = 5;
+    char *strings[StringNum];
+    char buf[maxlen + 1];
 
     int acknowledged_id = -1;
 
     printf("Generating random strings.......\n");
-    for (int i = 0; i < NUM_STRINGS; i++)
+    for (int i = 0; i < StringNum; i++)
     {
-        strings[i] = malloc(MAX_LEN + 1);
-        for (int j = 0; j < MAX_LEN; j++)
+        strings[i] = malloc(maxlen + 1);
+        for (int j = 0; j < maxlen; j++)
         {
             strings[i][j] = 'a' + (rand() % 26);
         }
-        strings[i][MAX_LEN] = '\0';
+        strings[i][maxlen] = '\0';
     }
     printf("Generation of random strings completed.\n");
 
@@ -44,7 +45,7 @@ int main()
     }
 
     printf("Opening fifo in write only mode!\n");
-    fd = open(FIFO_NAME, O_WRONLY);
+    int fd = open(FIFO_NAME, O_WRONLY);
     if (fd < 0)
     {
         perror("open");
@@ -56,16 +57,16 @@ int main()
 
     printf("Sending strings to fifo!\n");
     int k = 0;
-    while (k < NUM_STRINGS)
+    while (k < StringNum)
     {
 
-        for (int j = 0; j < GROUP_SIZE && k < NUM_STRINGS; j++, k++)
+        for (int j = 0; j < group && k < StringNum; j++, k++)
         {
             sprintf(buf, "%d:%s", k, strings[k]);
             write(fd, buf, strlen(buf));
         }
 
-        int num_read = read(fd, buf, MAX_LEN);
+        int num_read = read(fd, buf, maxlen);
         buf[num_read] = '\0';
         sscanf(buf, "%d", &acknowledged_id);
     }
