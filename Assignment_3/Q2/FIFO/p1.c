@@ -12,66 +12,66 @@
 int main()
 {
 
-    int maxlen = 5;
-    int StringNum = 50;
-    int group = 5;
-    char *strings[StringNum];
-    char buf[maxlen + 1];
+  int maxlen = 5;
+  int StringNum = 50;
+  int group = 5;
+  char *strings[StringNum];
+  char buf[maxlen + 1];
 
-    int acknowledged_id = -1;
+  int acknowledged_id = -1;
 
-    printf("Generating random strings.......\n");
-    for (int i = 0; i < StringNum; i++)
+  printf("Generating random strings.......\n");
+  for (int i = 0; i < StringNum; i++)
+  {
+    strings[i] = malloc(maxlen + 1);
+    for (int j = 0; j < maxlen; j++)
     {
-        strings[i] = malloc(maxlen + 1);
-        for (int j = 0; j < maxlen; j++)
-        {
-            strings[i][j] = 'a' + (rand() % 26);
-        }
-        strings[i][maxlen] = '\0';
+      strings[i][j] = 'a' + (rand() % 26);
     }
-    printf("Generation of random strings completed.\n");
+    strings[i][maxlen] = '\0';
+  }
+  printf("Generation of random strings completed.\n");
 
-    printf("Trying to access fifo named %s in the memory!\n",FIFO_NAME);
-    if (access(FIFO_NAME, F_OK) == -1)
+  printf("Trying to access fifo named %s in the memory!\n",FIFO_NAME);
+  if (access(FIFO_NAME, F_OK) == -1)
+  {
+    printf("Fifo %s does not exists in the memory!\n", FIFO_NAME);
+    printf("Now, Creating fifo %s in the memory!\n", FIFO_NAME);
+    if (mkfifo(FIFO_NAME, 0666) < 0)
     {
-        printf("Fifo %s does not exists in the memory!\n", FIFO_NAME);
-        printf("Now, Creating fifo %s in the memory!\n", FIFO_NAME);
-        if (mkfifo(FIFO_NAME, 0666) < 0)
-        {
-            perror("mkfifo");
-            exit(1);
-        }
+      perror("mkfifo");
+      exit(1);
     }
+  }
 
-    printf("Opening fifo in write only mode!\n");
-    int fd = open(FIFO_NAME, O_WRONLY);
-    if (fd < 0)
+  printf("Opening fifo in write only mode!\n");
+  int fd = open(FIFO_NAME, O_WRONLY);
+  if (fd < 0)
+  {
+      perror("open");
+      exit(1);
+  }
+  else{
+      printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
+  }
+
+  printf("Sending strings to fifo!\n");
+  int k = 0;
+  while (k < StringNum)
+  {
+
+    for (int j = 0; j < group && k < StringNum; j++, k++)
     {
-        perror("open");
-        exit(1);
-    }
-    else{
-        printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
+      sprintf(buf, "%d:%s", k, strings[k]);
+      write(fd, buf, strlen(buf));
     }
 
-    printf("Sending strings to fifo!\n");
-    int k = 0;
-    while (k < StringNum)
-    {
+    int num_read = read(fd, buf, maxlen);
+    buf[num_read] = '\0';
+    sscanf(buf, "%d", &acknowledged_id);
+  }
+  printf("Files sent to fifo successfully!\n");
 
-        for (int j = 0; j < group && k < StringNum; j++, k++)
-        {
-            sprintf(buf, "%d:%s", k, strings[k]);
-            write(fd, buf, strlen(buf));
-        }
-
-        int num_read = read(fd, buf, maxlen);
-        buf[num_read] = '\0';
-        sscanf(buf, "%d", &acknowledged_id);
-    }
-    printf("Files sent to fifo successfully!\n");
-
-    close(fd);
-    return 0;
+  close(fd);
+  return 0;
 }
