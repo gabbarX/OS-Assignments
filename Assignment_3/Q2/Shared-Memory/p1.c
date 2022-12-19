@@ -40,17 +40,24 @@ int main()
         printf("Shared Memory initialised successfully!\n");
     }
     ftruncate(fd,size);
-    char* ptr = mmap(NULL,size,PROT_READ |  PROT_WRITE,MAP_SHARED,fd,0);
+    char* ptr = (char*)mmap(NULL,size,PROT_READ |  PROT_WRITE,MAP_SHARED,fd,0);
     // for(int i=0;i<stringNum;i++)
     // {
     //     sprintf(buf, "%s",strings[i]);   
     //     write(ptr,buf,strlen(buf));
     // }
 
+    // for(int i=0;i<50;i++){
+    //     sprintf(ptr,"%s",strings[i]);
+    //     ptr+=5;
+    // }
+
     for(int i=0;i<50;i++){
-        sprintf(ptr,"%s",strings[i]);
+        strcpy(ptr,strings[i]);
         ptr+=5;
     }
+
+    printf("Successfully wrote the strings to shared memory!\n");
 
     // int k = 0;
     // while (k < stringNum)

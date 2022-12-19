@@ -18,7 +18,6 @@ int main()
     int GROUP_SIZE = 5;
     int fd = shm_open(SHM_NAME, O_RDONLY, 0666);
 
-
     int highest_id = -1;
     while (true) 
     {
