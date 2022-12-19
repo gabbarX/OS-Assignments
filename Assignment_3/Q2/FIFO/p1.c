@@ -42,6 +42,12 @@ int main()
       perror("mkfifo");
       exit(1);
     }
+    else{
+      printf("FIFO created successfully!\n");
+    }
+  }
+  else{
+    printf("Fifo already exists.\n");
   }
 
   printf("Opening fifo in write only mode!\n");
