@@ -46,7 +46,8 @@ int main(int argc, char** argv) {
     // Send a group of five strings to the server
     for (int i = 0; i < STRINGS_PER_PACKET; i++) {
       int id = next_id + i;
-      if (id >= NUM_STRINGS) {
+      if (id >= NUM_STRINGS) 
+      {
         break;
       }
       send(sockfd, &id, sizeof(int), 0);
@@ -57,7 +58,6 @@ int main(int argc, char** argv) {
     int acknowledged_id;
     recv(sockfd, &acknowledged_id, sizeof(int), 0);
     printf("Received acknowledgement for ID %d\n", acknowledged_id);
-
     next_id = acknowledged_id + 1;
   }
 

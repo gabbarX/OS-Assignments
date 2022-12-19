@@ -17,6 +17,7 @@ int main()
   int group = 5;
   char *strings[StringNum];
   char buf[maxlen];
+  int hx[10];
 
   int acknowledged_id = -1;
 
@@ -64,18 +65,26 @@ int main()
 
   printf("Sending strings to fifo!\n");
   int k = 0;
+  int j = 0;
+  int temp = 0;
   while (k < StringNum)
   {
 
-    for (int j = 0; j < group && k < StringNum; j++, k++)
+    // for (int j = 0; j < group && k < StringNum; j++, k++)
+    // {
+    //   sprintf(buf, "%s",strings[k]);
+    //   write(fd, buf, strlen(buf));
+    // }
+    for(j=temp;j<group;j++)
     {
-      sprintf(buf, "%s",strings[k]);
-      write(fd, buf, strlen(buf));
+      sprintf(buf,"%s",strings[j]);
+      write(fd,buf,strlen(buf));
+      sleep(1);
     }
-
-    int num_read = read(fd, buf, maxlen);
-    buf[num_read] = '\0';
-    sscanf(buf, "%d", &acknowledged_id);
+    temp = group;
+    // hx[j++] = group;
+    printf("highest id -> %d\n",group-1);
+    group+=5;
   }
 
   printf("Files sent to fifo successfully!\n");

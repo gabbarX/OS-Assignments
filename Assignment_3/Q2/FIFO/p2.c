@@ -33,7 +33,7 @@ int main()
       }
       id++;
     }
-    printf("Highest ID: %d\n",highest_id);
+    return 0;
   }
 
   close(fd);
