@@ -12,6 +12,8 @@
 
 int main()
 {
+
+    sleep(5);
     // create shared memory segment
     key_t key = ftok("shmfile",65);
     int shmid = shmget(key,SHM_SIZE,0666|IPC_CREAT);

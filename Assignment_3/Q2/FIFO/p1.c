@@ -16,7 +16,7 @@ int main()
   int StringNum = 50;
   int group = 5;
   char *strings[StringNum];
-  char buf[maxlen + 1];
+  char buf[maxlen];
 
   int acknowledged_id = -1;
 
@@ -52,6 +52,7 @@ int main()
 
   printf("Opening fifo in write only mode!\n");
   int fd = open(FIFO_NAME, O_WRONLY);
+  // printf("%d --- fd,",&fd);
   if (fd < 0)
   {
       perror("open");
@@ -61,6 +62,10 @@ int main()
       printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
   }
 
+  // for(int i=0;i<10;i++){
+  //   puts(strings[i]);
+  // }
+
   printf("Sending strings to fifo!\n");
   int k = 0;
   while (k < StringNum)
@@ -68,7 +73,7 @@ int main()
 
     for (int j = 0; j < group && k < StringNum; j++, k++)
     {
-      sprintf(buf, "%d:%s", k, strings[k]);
+      sprintf(buf, "%s",strings[k]);
       write(fd, buf, strlen(buf));
     }
 
@@ -77,7 +82,7 @@ int main()
     sscanf(buf, "%d", &acknowledged_id);
   }
   printf("Files sent to fifo successfully!\n");
-
   close(fd);
+  printf("File descriptor closed for program P1");
   return 0;
 }
