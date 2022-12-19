@@ -23,15 +23,21 @@ int main()
     key_t key = ftok("/tmp", 'S');
     int shm_id = shmget(key, NUM_STRINGS * MAX_STRING_LEN, IPC_CREAT | 0666);
     if (shm_id == -1) {
-        perror("Error creating shared memory segment");
+        perror("shmget");
         return 1;
+    }
+    else{
+        printf("Shared memory segment created succesfully!\n");
     }
 
     // Attach to the shared memory segment
     char* shm_ptr = (char*) shmat(shm_id, NULL, 0);
     if (shm_ptr == (char*)-1) {
-        perror("Error attaching to shared memory segment");
+        perror("shmat");
         return 1;
+    }
+    else{
+        printf("Successfully attached to the shared memory!\n");
     }
 
     // Send groups of strings to P2 and receive acknowledged ID
@@ -51,8 +57,11 @@ int main()
 
     // Detach from the shared memory segment
     if (shmdt(shm_ptr) == -1) {
-        perror("Error detaching from shared memory segment");
+        perror("shmdt");
         return 1;
+    }
+    else{
+        printf("Successfully detached from shared memory!\n");
     }
 
     return 0;

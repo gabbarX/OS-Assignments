@@ -6,11 +6,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define FIFO_NAME "haha"
+#define FIFO_NAME "haha2"
 #define STRING_LEN 10
    
-int main() {
-  // Open the FIFO for reading
+int main() 
+{
   int fifo_fd = open(FIFO_NAME, O_RDONLY);
   if (fifo_fd < 0) {
     perror("Error opening FIFO for reading");
@@ -19,7 +19,7 @@ int main() {
 
   int highest_id = -1;
   while (1) {
-    // Read a group of strings from the FIFO
+ 
     char buffer[STRING_LEN + 1];
     int id;
     while (read(fifo_fd, buffer, STRING_LEN + 1) > 0) {
@@ -30,7 +30,6 @@ int main() {
       }
     }
 
-    // Write the highest ID received back to P1
     char ack_buffer[10];
     sprintf(ack_buffer, "%d", highest_id);
     if (write(fifo_fd, ack_buffer, strlen(ack_buffer) + 1) < 0) {
@@ -38,7 +37,6 @@ int main() {
     }
   }
 
-  // Close the FIFO
   close(fifo_fd);
 
   return 0;

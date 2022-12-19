@@ -1,103 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#define FIFO_NAME "haha"
+#define MAX_LEN 50
+#define FIFO_NAME "haha2"
 #define NUM_STRINGS 50
-#define STRING_LEN 10
 #define GROUP_SIZE 5
 
-// Generate a random string of specified length
-char* generateRandomString(int len) 
+int main()
 {
-  char* str = malloc(len + 1);
-  for (int i = 0; i < len; i++) {
-    str[i] = 'a' + (rand() % 26);
-  }
-  str[len] = '\0';
-  return str;
-}
+    int fd;
+    char *strings[NUM_STRINGS];
+    char buf[MAX_LEN + 1];
 
-int main() {
+    int acknowledged_id = -1;
 
-  //Array for storing random Strings
-  char *randomStrings[50];
-  
-  // Create the FIFO if it doesn't already exist
-  printf("Creating FIFO!\n");
-  mkfifo(FIFO_NAME, 0666);
-  printf("FIFO initialised correctly!\n");
+    printf("Generating random strings.......\n");
+    for (int i = 0; i < NUM_STRINGS; i++)
+    {
+        strings[i] = malloc(MAX_LEN + 1);
+        for (int j = 0; j < MAX_LEN; j++)
+        {
+            strings[i][j] = 'a' + (rand() % 26);
+        }
+        strings[i][MAX_LEN] = '\0';
+    }
+    printf("Generation of random strings completed.\n");
 
-  // Open the FIFO for writing
-  int fifo_fd = open(FIFO_NAME, O_WRONLY);
-  if (fifo_fd < 0) {
-    perror("Error opening FIFO for writing");
-    return 1;
-  }
-  else{
-    printf("FIFO opened for writing!\n");
-  }
+    printf("Trying to access fifo named %s in the memory!\n",FIFO_NAME);
+    if (access(FIFO_NAME, F_OK) == -1)
+    {
+        printf("Fifo %s does not exists in the memory!\n", FIFO_NAME);
+        printf("Now, Creating fifo %s in the memory!\n", FIFO_NAME);
+        if (mkfifo(FIFO_NAME, 0666) < 0)
+        {
+            perror("mkfifo");
+            exit(1);
+        }
+    }
 
-  printf("Generating array of random strings!\n");
-  // Generate the array of random strings
-  for(int i = 0; i<50; i++){
-    randomStrings[i] = generateRandomString(5);
-  }
-  printf("Random strings generated!");
+    printf("Opening fifo in write only mode!\n");
+    fd = open(FIFO_NAME, O_WRONLY);
+    if (fd < 0)
+    {
+        perror("open");
+        exit(1);
+    }
+    else{
+        printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
+    }
 
-  for(int i=0;i<50;i++){
-    puts(randomStrings[i]);
-  }
+    printf("Sending strings to fifo!\n");
+    int k = 0;
+    while (k < NUM_STRINGS)
+    {
 
-  
-  // char** strings = malloc(NUM_STRINGS * sizeof(char*));
-  // for (int i = 0; i < NUM_STRINGS; i++) {
-  //   strings[i] = generate_random_string(STRING_LEN);
-  // }
+        for (int j = 0; j < GROUP_SIZE && k < NUM_STRINGS; j++, k++)
+        {
+            sprintf(buf, "%d:%s", k, strings[k]);
+            write(fd, buf, strlen(buf));
+        }
 
-  // for(int i=0;i<50;i++){
-  //   puts(strings[i]);
-  // }
+        int num_read = read(fd, buf, MAX_LEN);
+        buf[num_read] = '\0';
+        sscanf(buf, "%d", &acknowledged_id);
+    }
+    printf("Files sent to fifo successfully!\n");
 
-  // int acknowledged_id = -1;
-  // int num_sent = 0;
-  // while (num_sent < NUM_STRINGS) {
-  //   // Send a group of five strings to P2
-  //   for (int i = 0; i < GROUP_SIZE; i++) {
-  //     int id = acknowledged_id + 1 + i;
-  //     if (id >= NUM_STRINGS) {
-  //       break;
-  //     }
-
-  //     // Write the ID and string to the FIFO
-  //     char buffer[STRING_LEN + 1];
-  //     sprintf(buffer, "%d %s", id, strings[id]);
-  //     if (write(fifo_fd, buffer, strlen(buffer) + 1) < 0) {
-  //       perror("Error writing to FIFO");
-  //     }
-  //     num_sent++;
-  //   }
-
-  //   // Read the acknowledged ID from the FIFO
-  //   char buffer[10];
-  //   if (read(fifo_fd, buffer, 10) < 0) {
-  //     perror("Error reading from FIFO");
-  //   }
-  //   sscanf(buffer, "%d", &acknowledged_id);
-  // }
-
-  // // Close the FIFO and free the strings array
-  // close(fifo_fd);
-
-
-  // for (int i = 0; i < NUM_STRINGS; i++) {
-  //   free(strings[i]);
-  // }
-  // free(strings);
-
-  return 0;
+    close(fd);
+    return 0;
 }
