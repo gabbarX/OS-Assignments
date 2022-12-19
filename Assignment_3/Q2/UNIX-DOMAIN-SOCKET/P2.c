@@ -11,7 +11,7 @@
 
 int main()
 {
-    int maxlen = 5;
+    int maxlen = 1;
     int stringNum = 50;
     // int maxlen = 5;
     char buf[maxlen];

@@ -9,7 +9,7 @@
 
 int main() 
 {
-  int maxlen = 5;
+  int maxlen = 1;
   int stringNum = 50;
   int packetNum = 5;
   int fd;
