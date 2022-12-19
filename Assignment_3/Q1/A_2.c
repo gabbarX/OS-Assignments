@@ -14,7 +14,7 @@ void *philosopher(void *arg)
     {
         printf("Philosopher %d is thinking.\n", id);
         //Thinking
-        sleep(1);
+        sleep(2);
 
         // pick up left fork
         sem_wait(&forks[id]);
@@ -26,7 +26,7 @@ void *philosopher(void *arg)
 
         printf("Philosopher %d is eating.\n", id);
         //Thinking
-        sleep(1);
+        sleep(2);
 
         // put down left fork
         sem_post(&forks[id]);

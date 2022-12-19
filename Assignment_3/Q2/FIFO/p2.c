@@ -6,9 +6,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define FIFO_NAME "my_fifo"
+#define FIFO_NAME "haha"
 #define STRING_LEN 10
-
+   
 int main() {
   // Open the FIFO for reading
   int fifo_fd = open(FIFO_NAME, O_RDONLY);
