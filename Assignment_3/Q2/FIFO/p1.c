@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 
-#define FIFO_NAME "haha2"
+#define FIFO_NAME "haha"
 
 int main()
 {
