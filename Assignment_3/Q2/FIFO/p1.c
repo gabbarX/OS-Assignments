@@ -13,16 +13,16 @@ int main()
 {
 
   int maxlen = 5;
-  int StringNum = 50;
+  int stringNum = 50;
   int group = 5;
-  char *strings[StringNum];
+  char *strings[stringNum];
   char buf[maxlen];
   int hx[10];
 
   int acknowledged_id = -1;
 
   printf("Generating random strings.......\n");
-  for (int i = 0; i < StringNum; i++)
+  for (int i = 0; i < stringNum; i++)
   {
     strings[i] = malloc(maxlen + 1);
     for (int j = 0; j < maxlen; j++)
@@ -67,10 +67,10 @@ int main()
   int k = 0;
   int j = 0;
   int temp = 0;
-  while (k < StringNum)
+  while (j < stringNum)
   {
 
-    // for (int j = 0; j < group && k < StringNum; j++, k++)
+    // for (int j = 0; j < group && k < stringNum; j++, k++)
     // {
     //   sprintf(buf, "%s",strings[k]);
     //   write(fd, buf, strlen(buf));

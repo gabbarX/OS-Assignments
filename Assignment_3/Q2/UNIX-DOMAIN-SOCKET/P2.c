@@ -5,17 +5,19 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <stdbool.h>
 
-
-#define MAX_STR_LEN 5  // maximum length of each string
-#define NUM_STRINGS 5   // number of strings to receive at a time
-#define SOCKET_NAME "/tmp/socket1"  // name of the unix domain socket
+#define MAX_STR_LEN 5  
+#define NUM_STRINGS 50   
+#define STRING_LEN 5
+#define SOCKET_NAME "/tmp/socket1" 
 
 int main()
 {
-
-    int sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sockfd < 0) {
+    char buf[MAX_STR_LEN];
+    int idx=0;
+    int fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (fd < 0) {
         perror("Error creating socket");
         exit(1);
     }
@@ -24,17 +26,17 @@ int main()
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
     strncpy(addr.sun_path, SOCKET_NAME, sizeof(addr.sun_path) - 1);
-    if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+    if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         perror("Error binding socket to name");
         exit(1);
     }
 
-    if (listen(sockfd, 5) < 0) {
+    if (listen(fd, 5) < 0) {
         perror("Error listening for incoming connections");
         exit(1);
     }
 
-    int clientfd = accept(sockfd, NULL, NULL);
+    int clientfd = accept(fd, NULL, NULL);
     if (clientfd < 0) {
         perror("Error accepting connection");
         exit(1);
@@ -51,16 +53,16 @@ int main()
                 exit(1);
             }
 
-
             char str[MAX_STR_LEN];
             if (read(clientfd, str, MAX_STR_LEN) < 0) {
                 perror("Error receiving string");
                 exit(1);
             }
 
-            printf("ID: %d, String: %s\n", id, str);
+            printf("ID: %d, String: %s\n", idx++, str);
 
-            if (id > highest_id) {
+            if (id > highest_id) 
+            {
                 highest_id = id;
             }
         }
@@ -70,9 +72,9 @@ int main()
             exit(1);
         }
     }
-
+    
     close(clientfd);
-    close(sockfd);
+    close(fd);
 
     return 0;
 }
