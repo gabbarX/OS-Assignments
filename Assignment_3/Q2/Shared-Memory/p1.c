@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#define SHM_NAME "shmfile"
+#define SHM_NAME "shmfile2"
 
 int main()
 {   
@@ -40,13 +40,16 @@ int main()
         printf("Shared Memory initialised successfully!\n");
     }
     ftruncate(fd,size);
-    char* ptr = (char*)mmap(0,size,PROT_WRITE,MAP_SHARED,fd,0);
-    for(int i=0;i<stringNum;i++)
-    {
-        for(int j=0;j<50;j++)
-        {
-            ptr[i] = strings[i];
-        }
+    char* ptr = mmap(NULL,size,PROT_READ |  PROT_WRITE,MAP_SHARED,fd,0);
+    // for(int i=0;i<stringNum;i++)
+    // {
+    //     sprintf(buf, "%s",strings[i]);   
+    //     write(ptr,buf,strlen(buf));
+    // }
+
+    for(int i=0;i<50;i++){
+        sprintf(ptr,"%s",strings[i]);
+        ptr+=5;
     }
 
     // int k = 0;
