@@ -34,17 +34,6 @@ int main()
       id++;
     }
     printf("Highest ID: %d\n",highest_id);
-
-    // sleep(2);
-
-    // char ack_buffer[6];
-    // sprintf(ack_buffer, "%d\n", highest_id);
-    // printf("%s",ack_buffer);
-    // if (write(fd, ack_buffer, strlen(ack_buffer) + 1) < 0) 
-    // {
-    //   perror("write");
-    // }
-
   }
 
   close(fd);

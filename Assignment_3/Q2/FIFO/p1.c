@@ -62,10 +62,6 @@ int main()
       printf("Successfully opened the fifo '%s'!\n",FIFO_NAME);
   }
 
-  // for(int i=0;i<10;i++){
-  //   puts(strings[i]);
-  // }
-
   printf("Sending strings to fifo!\n");
   int k = 0;
   while (k < StringNum)
@@ -81,6 +77,7 @@ int main()
     buf[num_read] = '\0';
     sscanf(buf, "%d", &acknowledged_id);
   }
+
   printf("Files sent to fifo successfully!\n");
   close(fd);
   printf("File descriptor closed for program P1");
