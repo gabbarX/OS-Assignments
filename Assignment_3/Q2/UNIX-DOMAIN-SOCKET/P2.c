@@ -7,14 +7,14 @@
 #include <sys/un.h>
 #include <stdbool.h>
 
-#define MAX_STR_LEN 5  
-#define NUM_STRINGS 50   
-#define STRING_LEN 5
 #define SOCKET_NAME "/tmp/socket1" 
 
 int main()
 {
-    char buf[MAX_STR_LEN];
+    int maxlen = 5;
+    int stringNum = 50;
+    // int maxlen = 5;
+    char buf[maxlen];
     int idx=0;
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0) {
@@ -45,7 +45,7 @@ int main()
     while (1) {
         int highest_id = -1; 
 
-        for (int i = 0; i < NUM_STRINGS; i++) 
+        for (int i = 0; i < stringNum; i++) 
         {
             int id;
             if (read(clientfd, &id, sizeof(id)) < 0) {
@@ -53,8 +53,8 @@ int main()
                 exit(1);
             }
 
-            char str[MAX_STR_LEN];
-            if (read(clientfd, str, MAX_STR_LEN) < 0) {
+            char str[maxlen];
+            if (read(clientfd, str, maxlen) < 0) {
                 perror("Error receiving string");
                 exit(1);
             }
