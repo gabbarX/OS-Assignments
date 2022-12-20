@@ -4,52 +4,68 @@
 #include <sys/shm.h>
 #include <string.h>
 
-#define SHM_NAME "shmfile2" 
-#define SHM_SIZE 1024  
-#define STR_LEN 5
+char buffer[12];
+int main()
+{
+    int i;
+    void *shared_memory;
+    char buff[100];
+    int shmid;
+    int shmid2;
+    void *shared_memory2;
+    int cur = 0;
+    while (1)
+    {
+        char c2[2];
+        shmid = shmget((key_t)7675, sizeof(char) * 12 * 5, 0666);
+        printf("Key of shared memory is %d\n", shmid);
+        shared_memory = shmat(shmid, NULL, 0); // process attached to shared memory segment
+        printf("Process attached at %p\n", shared_memory);
+        for (int i = cur; i < cur + 5; i++)
+        {
+            strcpy(buffer, (char *)shared_memory + i * 12);
+            printf("Data read from shared memory is : %s\n", (char *)shared_memory + i * 12);
+        }
+        if (strlen(buffer) == 11)
+        {
+            shmid2 = shmget((key_t)1110, sizeof(char) * 12, 0666 | IPC_CREAT);
+            shared_memory2 = shmat(shmid2, NULL, 0);
+            char c[2] = "0";
+            strncat(c, &buffer[10], 1);
+            strcpy(shared_memory2, c);
+            strcpy(c2, c);
+            printf("buffer %s\n", buffer);
+            printf("p2 sent : %s\n", (char *)shared_memory2);
+        }
+        else
+        {
+            shmid2 = shmget((key_t)1110, sizeof(char) * 12, 0666 | IPC_CREAT);
+            shared_memory2 = shmat(shmid2, NULL, 0);
+            char c[2];
+            for (int i = 0; i < 2; i++)
+            {
+                if (strlen(buffer) == 2)
+                {
+                    c[0] = buffer[0];
+                    c[1] = buffer[1];
+                }
+                c[i] = buffer[strlen(buffer) - 4 + i];
+            }
+            strcpy(shared_memory2, c);
+            printf("buffer %s\n", buffer);
+            strcpy(c2, c);
+            printf("p2 sent : %s\n", (char *)shared_memory2);
+        }
 
-int main() {
+        cur = atoi(c2);
+        if (cur >= 49)
+            exit(EXIT_SUCCESS);
 
-    key_t key = ftok("shmfile",65);
-    int shmid = shmget(key, 1024, 0666| IPC_CREAT);
-    char *str = (char*) shmat(shmid,(void*)0,0);
-
-    printf("Data from memory: %s\n", str);
-
-
-    shmdt(str);
-    shmctl(shmid,IPC_RMID,NULL);
-    
-
-
-    // while (true) 
-    // {
-    //     char buffer[STRING_LEN];
-    //     int id;
-    //     while (read(shm_id, buffer, STRING_LEN) > 0) 
-    //     {
-    //         sscanf(buffer, "%d %s", &id, buffer);
-    //         printf("Received string with ID %d: %s\n", id, buffer);
-    //         if (id > highest_id) 
-    //         {
-    //             highest_id = id;
-    //         }
-    //         id++;
-    //     }
-    //     return 0;
-    // }
-
-    // // unmap the shared memory object from the process's address space
-    // if (munmap(shm_ptr, SHM_SIZE) == -1) {
-    //     perror("Error unmapping shared memory object");
-    //     exit(1);
-    // }
-
-    // // close the shared memory object
-    // if (close(shm_fd) == -1) {
-    //     perror("Error closing shared memory object");
-    //     exit(1);
-    // }
-
-    return 0;
+        // strcpy(buffer, shared_memory);
+        // shmid2 = shmget((key_t)1110, 1024, 0666 | IPC_CREAT);
+        // shared_memory2 = shmat(shmid2, NULL, 0);
+        // cur = buffer[0];
+        // strcpy(shared_memory2, buffer);
+        // printf("p2 sent : %s\n", (char *)shared_memory2);
+    }
 }
