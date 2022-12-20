@@ -13,8 +13,8 @@
 #include <linux/unistd.h>
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Manan Chugh");
-MODULE_DESCRIPTION("Manan's custom kernel module");
+MODULE_AUTHOR("Ankit Gautam");
+MODULE_DESCRIPTION("Custom kernel module");
 
 SYSCALL_DEFINE1(print_task_struct, pid_t, pid)
 {
