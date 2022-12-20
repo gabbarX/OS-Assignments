@@ -56,7 +56,6 @@ int main()
 
   printf("Opening fifo in write only mode!\n");
   int fd = open(FIFO_NAME, O_WRONLY);
-  // printf("%d --- fd,",&fd);
   if (fd < 0)
   {
       perror("open");
@@ -73,11 +72,6 @@ int main()
   while (j < stringNum)
   {
 
-    // for (int j = 0; j < group && k < stringNum; j++, k++)
-    // {
-    //   sprintf(buf, "%s",strings[k]);
-    //   write(fd, buf, strlen(buf));
-    // }
     for(j=temp;j<group;j++)
     {
       sprintf(buf,"%s",strings[j]);

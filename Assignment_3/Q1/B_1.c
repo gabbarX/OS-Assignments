@@ -26,7 +26,7 @@ void *philosopher(void *arg)
         printf("Philosopher %d picked up right fork.\n", id);
 
         sem_wait(&sauceBowl[id%2]);
-        printf("Philosopher %d is eating.\n", id);
+        printf("Philosopher %d is eating from bowl %d.\n", id, id%2);
         sleep(1);
         sem_post(&sauceBowl[id%2]);
 

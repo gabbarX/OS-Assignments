@@ -7,6 +7,7 @@
 int PhilosopherNum=5;
 int f = 5;
 int forks[5];
+int bowl[2];
 
 void *philosophersWorld(void *arg) 
 {
@@ -23,7 +24,9 @@ void *philosophersWorld(void *arg)
         forks[(id + 1) % f] = 1;
         printf("Philosopher %d picked up right fork.\n", id);
 
-        printf("Philosopher %d is eating.\n", id);
+        bowl[id%2] = 1;
+        printf("Philosopher %d is eating form bowl %d.\n", id, id%2);
+        bowl[id%2] = 0;
         sleep(1);
 
         forks[id] = 0;
