@@ -1,25 +1,22 @@
-#include <linux/syscalls.h>
-#include <linux/types.h>
-#include <linux/sched.h>
-
+#include <linux/module.h>     // included for all kernel modules
+#include <linux/kernel.h>     // included for KERN_INFO
+#include <linux/init.h>       // included for __init and __exit macros
 
 MODULE_LICENSE("GPL");
-//Define syscall
-#define PROCESS_INFO 287
+MODULE_AUTHOR("CSE-231-TAS");
+MODULE_DESCRIPTION("HelloWorld Linux Kernel Module."); 
 
-//Define the system call
-SYSCALL_DEFINE1(PROCESS_INFO,int,pid)
+static int __init hello_init(void)
 {
-    struct task_struct *task;
-    struct pid *pid_struct;
-
-    pid_struct = find_get_pid(pid);
-    task = pid_task(pid_struct, PIDTYPE_PID);
-
-    printk("pid: %d\n",task->pid);
-    printk("user_id: %d\n",task->cred->uid.val);
-    printk("pgid: %d\n",task->group_leader->pid);
-    printk("common path: %s\n",task->comm);
-
-    return 0;
+    printk(KERN_INFO "Hello world!\n");
+    return 0;   
 }
+
+
+
+static void __exit hello_cleanup(void)
+{
+    printk(KERN_INFO "Cleaning up module.\n");
+}
+module_init(hello_init);      
+module_exit(hello_cleanup);   
