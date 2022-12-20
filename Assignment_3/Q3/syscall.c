@@ -2,6 +2,13 @@
 #include <linux/module.h>
 #include <linux/syscalls.h>
 #include <linux/sched.h>
+#include <linux/mutex.h>
+#include <linux/futex.h>
+#include <linux/pipe_fs_i.h>
+#include <linux/audit.h>
+#include <linux/resource.h>
+#include <linux/blkdev.h>
+#include <linux/task_io_accounting_ops.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Manan Chugh");
