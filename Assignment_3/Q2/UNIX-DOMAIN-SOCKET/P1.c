@@ -4,11 +4,15 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <time.h>
+
 
 #define SOCKET_NAME "/tmp/socket1"
 
 int main() 
 {
+
+  time_t begin = time(NULL);
   int maxlen = 1;
   int stringNum = 50;
   int packetNum = 5;
@@ -65,7 +69,7 @@ int group = 5;
     {
       sprintf(buf,"%s",strings[j]);
       write(fd,buf,strlen(buf));
-      sleep(1);
+      // sleep(1);
     }
     temp = group;
     // hx[j++] = group;
@@ -95,5 +99,7 @@ int group = 5;
 
   close(fd);
 
+  time_t end = time(NULL);
+  printf("Elapsed time is %d seconds.\n",(end-begin));
   return 0;
 }

@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <time.h>
 
 
 #define FIFO_NAME "haha"
@@ -12,6 +13,7 @@
 int main()
 {
 
+  time_t begin = time(NULL);
   int maxlen = 5;
   int stringNum = 50;
   int group = 5;
@@ -90,5 +92,9 @@ int main()
   printf("Files sent to fifo successfully!\n");
   close(fd);
   printf("File descriptor closed for program P1");
+
+  time_t end = time(NULL);
+  printf("Elapsed time is %d seconds.\n",(end-begin));
+
   return 0;
 }

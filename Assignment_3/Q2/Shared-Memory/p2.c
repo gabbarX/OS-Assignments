@@ -5,42 +5,62 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#define SHM_NAME "/my_shm"  // name of the shared memory object
-#define SHM_SIZE 1024  // size of shared memory in bytes
-#define STR_LEN 10  // length of each string
+#define SHM_NAME "shmfile2" 
+#define SHM_SIZE 1024  
+#define STR_LEN 5
 
 int main() {
-    // open the shared memory object
+
     int shm_fd = shm_open(SHM_NAME, O_RDWR, 0666);
     if (shm_fd < 0) {
         perror("Error opening shared memory object");
         exit(1);
     }
 
-    // map the shared memory object to the process's address space
     char* shm_ptr = (char*) mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if (shm_ptr == MAP_FAILED) {
         perror("Error mapping shared memory object");
         exit(1);
     }
 
-    // receive and process groups of strings from P1
     int highest_id = -1;  // highest ID received
-    while (1) {
-        // receive and print the group of strings
-        for (int i = 0; i < 5; i++) {
-            int id = *((int*) shm_ptr);
-            char str[STR_LEN + 1];
-            strcpy(str, shm_ptr + sizeof(int));
-            printf("Received string with ID %d: %s\n", id, str);
-            shm_ptr += sizeof(int) + STR_LEN + 1;  // +1 for null terminator
-            if (id > highest_id) highest_id = id;  // update the highest ID
-        }
+    // while (1) {
+    //     // receive and print the group of strings
+    //     for (int i = 0; i < 5; i++) {
+    //         int id = *((int*) shm_ptr);
+    //         char str[STR_LEN + 1];
+    //         strcpy(str, shm_ptr + sizeof(int));
+    //         printf("Received string with ID %d: %s\n", id, str);
+    //         shm_ptr += sizeof(int) + STR_LEN + 1;  // +1 for null terminator
+    //         if (id > highest_id) highest_id = id;  // update the highest ID
+    //     }
 
-        // send the acknowledged ID back to P1
-        *((int*) shm_ptr) = highest_id;
-        shm_ptr = (char*) mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);  // reset the shared memory pointer
+    //     // send the acknowledged ID back to P1
+    //     *((int*) shm_ptr) = highest_id;
+    //     shm_ptr = (char*) mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);  // reset the shared memory pointer
+    // }
+
+    while (true) 
+    {
+        char buffer[STRING_LEN];
+        int id;
+        while (read(shm_id, buffer, STRING_LEN) > 0) 
+        {
+            sscanf(buffer, "%d %s", &id, buffer);
+            printf("Received string with ID %d: %s\n", id, buffer);
+            if (id > highest_id) 
+            {
+                highest_id = id;
+            }
+            id++;
+        }
+        return 0;
     }
+
+
+
+
+
 
     // unmap the shared memory object from the process's address space
     if (munmap(shm_ptr, SHM_SIZE) == -1) {
