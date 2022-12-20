@@ -22,7 +22,7 @@ static unsigned long find_sys_call_table(void)
     unsigned long ptr;
 
     sctable = NULL;
-    for (ptr = (unsigned long)sys_close;
+    for (ptr = (unsigned long)ksys_close;
          ptr < (unsigned long)&loops_per_jiffy; ptr += sizeof(void )) {
         unsigned longp;
 
@@ -65,7 +65,7 @@ static int __init sys_call_init(void)
 
     cr0 = read_cr0();
     write_cr0(cr0 & ~0x00010000);
-    sctable[NR_my_syscall] = my_syscall;
+    sctable[NR_print_task_struct] = print_task_struct;
     write_cr0(cr0);
 
     return 0;
@@ -82,7 +82,7 @@ static void __exit sys_call_exit(void)
 
     cr0 = read_cr0();
     write_cr0(cr0 & ~0x00010000);
-    sctable[__NR_my_syscall] = NULL;
+    sctable[NR_print_task_struct] = NULL;
     write_cr0(cr0);
 }
 
