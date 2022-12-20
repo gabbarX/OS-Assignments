@@ -1,82 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/shm.h>
-#include <sys/ipc.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/mman.h>
+#include <sys/shm.h>
+#include <string.h>
 
-#define SHM_NAME "shmfile2"
+char randomArr[50][12];
 
-int main()
-{   
+void createRandomStr()
+{
 
-    int maxlen = 5;
-    int stringNum = 50;
-    int groupSize = 5;
-    int acknowledged_id = -1;
-    int group = 5;
-    char buf[maxlen];
-    char *strings[stringNum];
-    for (int i = 0; i < stringNum; i++)
+    char alpha[26];
+    for (int i = 0; i < 26; i++)
     {
-        strings[i] = malloc(maxlen + 1);
-        for (int j = 0; j < maxlen; j++)
+        alpha[i] = i % 26 + 65;
+    }
+    for (int i = 0; i < 50; i++)
+    {
+        for (int j = 0; j < 10; j++)
         {
-        strings[i][j] = 'a' + (rand() % 26);
+            randomArr[i][j] = alpha[rand() % 26];
         }
-        strings[i][maxlen] = '\0';
     }
-
-    int size = sizeof(strings);
-    printf("Creating shared memory segment!\n");
-    int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
-    if (fd == -1) {
-        perror("shm_open");
-        return EXIT_FAILURE;
+    for (int i = 0; i < 50; i++)
+    {
+        int c = i;
+        char c1[2];
+        c1[0] = 0;
+        sprintf(c1, "%d", c);
+        strcat(randomArr[i], c1);
+        printf("%s\n", randomArr[i]);
     }
-    else{
-        printf("Shared Memory initialised successfully!\n");
+}
+char buffer[12];
+int main()
+{
+    createRandomStr();
+    int i;
+    void *shared_memory;
+    char buff[100];
+    int shmid;
+    shmid = shmget((key_t)7675, sizeof(char) * 12 * 5, 0666 | IPC_CREAT);
+    // creates shared memory segment with key 2345, having size 1024 bytes. IPC_CREAT is used to create the shared segment if it does not exist. 0666 are the permissions on the shared segment
+    printf("Key of shared memory is %d\n", shmid);
+    shared_memory = shmat(shmid, NULL, 0);
+    // process attached to shared memory segment
+    printf("Process attached at %p\n", shared_memory);
+    // this prints the address where the segment is attached with this process
+    int cur = 0;
+    int Arrived = 0;
+
+    while (1)
+    {
+
+        for (int i = cur; i < cur + 5; i++)
+        {
+            strcpy(shared_memory + i * 12, randomArr[i]);
+            printf("You wrote : %s\n", (char *)shared_memory + i * 12);
+        }
+        // int condi = 0;
+
+        int shmid2;
+        void *shared_memory2;
+        shmid2 = shmget((key_t)1110, 1024, 0666);
+        printf("Key of 2nd shared memory is %d\n", shmid2);
+        char *t;
+        shared_memory2 = shmat(shmid, NULL, 0);
+        strcpy((char *)shared_memory2, buffer);
+        char rev[12];
+        Arrived = strtol(buffer, &t, 10);
+        printf("Data returned from shared memory is : %s\n", (char *)shared_memory2);
+
+        if (cur > 49)
+        {
+            break;
+        }
+        // condi = 1;
+
+        cur = Arrived + 1;
     }
-    ftruncate(fd,size);
-    char* ptr = (char*)mmap(NULL,size,PROT_READ |  PROT_WRITE,MAP_SHARED,fd,0);
-    // for(int i=0;i<stringNum;i++)
-    // {
-    //     sprintf(buf, "%s",strings[i]);   
-    //     write(ptr,buf,strlen(buf));
-    // }
-
-    // for(int i=0;i<50;i++){
-    //     sprintf(ptr,"%s",strings[i]);
-    //     ptr+=5;
-    // }
-
-    for(int i=0;i<50;i++){
-        strcpy(ptr,strings[i]);
-        ptr+=5;
-    }
-
-    printf("Successfully wrote the strings to shared memory!\n");
-
-    // int k = 0;
-    // while (k < stringNum)
-    // {
-    //     for (int j = 0; j < group && k < stringNum; j++, k++)
-    //     {
-    //         sprintf(buf, "%s",strings[k]);
-    //         write(ptr, buf, strlen(buf));
-    //     }
-
-    //     int num_read = read(ptr, buf, maxlen);
-    //     buf[num_read] = '\0';
-    //     sscanf(buf, "%d", &acknowledged_id);
-
-    // }
-    
-    close(fd);
-    shm_unlink(SHM_NAME);
-
-
-    return 0;
+    // data written to shared memory
 }
