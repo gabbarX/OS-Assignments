@@ -26,7 +26,7 @@ int main()
         strings[i][maxlen] = '\0';
     }
 
-    shmid = shmget((key_t)7675, sizeof(char) * 12 * 5, 0666 | IPC_CREAT);
+    shmid = shmget((key_t)7675, sizeof(string), 0666 | IPC_CREAT);
     // printf("Key of shared memory is %d\n", shmid);
     shared_memory = shmat(shmid, NULL, 0);
     // printf("Process attached at %p\n", shared_memory);
@@ -38,8 +38,8 @@ int main()
 
         for (int i = cur; i < cur + stringNum; i++)
         {
-            strcpy(shared_memory + i * 12, strings[i]);
-            printf("You wrote : %s\n", (char *)shared_memory + i * 12);
+            strcpy(shared_memory + i * 5, strings[i]);
+            // printf("You wrote : %s\n", (char *)shared_memory + i * 12);
         }
         // int condi = 0;
 
