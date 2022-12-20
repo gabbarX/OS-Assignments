@@ -16,6 +16,26 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Ankit Gautam");
 MODULE_DESCRIPTION("Custom kernel module");
 
+static unsigned long find_sys_call_table(void)
+{
+    unsigned long sctable;
+    unsigned long ptr;
+
+    sctable = NULL;
+    for (ptr = (unsigned long)sys_close;
+         ptr < (unsigned long)&loops_per_jiffy; ptr += sizeof(void )) {
+        unsigned longp;
+
+        p = (unsigned long *)ptr;
+        if (p[NR_close] == (unsigned long)sys_close) {
+            sctable = (unsigned long **)p;
+            return sctable;
+        }
+    }
+
+    return NULL;
+}
+
 SYSCALL_DEFINE1(print_task_struct, pid_t, pid)
 {
     struct task_struct *task;
