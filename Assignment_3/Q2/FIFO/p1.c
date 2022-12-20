@@ -33,6 +33,7 @@ int main()
     }
     strings[i][maxlen] = '\0';
   }
+  
   printf("Generation of random strings completed.\n");
 
   printf("Trying to access fifo named %s in the memory!\n",FIFO_NAME);
