@@ -22,6 +22,7 @@ void *philosopher(void *arg)
         sem_wait(&forks[(id + 1) % NUM_PHILOSOPHERS]);
         printf("Philosopher %d picked up right fork.\n", id);
 
+
         printf("Philosopher %d is eating.\n", id);
         sleep(2);
 
