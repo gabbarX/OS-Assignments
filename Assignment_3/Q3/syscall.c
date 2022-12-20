@@ -40,7 +40,7 @@
 #include <linux/mutex.h>
 #include <linux/futex.h>
 #include <linux/pipe_fs_i.h>
-#include <linux/audit.h> /* for audit_free() */
+#include <linux/audit.h>
 #include <linux/resource.h>
 #include <linux/blkdev.h>
 #include <linux/task_io_accounting_ops.h>
