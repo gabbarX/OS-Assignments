@@ -18,13 +18,13 @@ int main()
     {
         char c2[2];
         shmid = shmget((key_t)7675, sizeof(char) * 12 * 5, 0666);
-        printf("Key of shared memory is %d\n", shmid);
+        // printf("Key of shared memory is %d\n", shmid);
         shared_memory = shmat(shmid, NULL, 0); // process attached to shared memory segment
-        printf("Process attached at %p\n", shared_memory);
+        // printf("Process attached at %p\n", shared_memory);
         for (int i = cur; i < cur + 5; i++)
         {
             strcpy(buffer, (char *)shared_memory + i * 12);
-            printf("Data read from shared memory is : %s\n", (char *)shared_memory + i * 12);
+            // printf("Data read from shared memory is : %s\n", (char *)shared_memory + i * 12);
         }
         if (strlen(buffer) == 11)
         {
@@ -59,13 +59,6 @@ int main()
 
         cur = atoi(c2);
         if (cur >= 49)
-            exit(EXIT_SUCCESS);
-
-        // strcpy(buffer, shared_memory);
-        // shmid2 = shmget((key_t)1110, 1024, 0666 | IPC_CREAT);
-        // shared_memory2 = shmat(shmid2, NULL, 0);
-        // cur = buffer[0];
-        // strcpy(shared_memory2, buffer);
-        // printf("p2 sent : %s\n", (char *)shared_memory2);
+            exit(EXIT_SUCCESS); 
     }
 }
