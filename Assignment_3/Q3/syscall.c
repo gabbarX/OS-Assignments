@@ -33,23 +33,37 @@ SYSCALL_DEFINE1(print_task_struct, pid_t, pid)
 }
 
 static int __init sys_call_init(void)
-{
-    long error;
+{    
+    unsigned long cr0;
+    unsigned long sctable;
 
-    error = register_syscall("print_task_struct", (void*)print_task_struct);
-    if (error) {
-        printk(KERN_ERR "Failed to register syscall\n");
-        return error;
+    sctable = find_sys_call_table();
+    if (!sctable) {
+        printk(KERN_ERR "Syscall table not found\n");
+        return -EINVAL;
     }
 
-    printk(KERN_INFO "Syscall registered\n");
+    cr0 = read_cr0();
+    write_cr0(cr0 & ~0x00010000);
+    sctable[NR_my_syscall] = my_syscall;
+    write_cr0(cr0);
+
     return 0;
 }
 
 static void __exit sys_call_exit(void)
 {
-    // unregister_sysctl_table("print_task_struct");
-    printk(KERN_INFO "Syscall unregistered\n");
+    unsigned long cr0;
+    unsigned long sctable;
+
+    sctable = find_sys_call_table();
+    if (!sctable)
+        return;
+
+    cr0 = read_cr0();
+    write_cr0(cr0 & ~0x00010000);
+    sctable[__NR_my_syscall] = NULL;
+    write_cr0(cr0);
 }
 
 module_init(sys_call_init);
