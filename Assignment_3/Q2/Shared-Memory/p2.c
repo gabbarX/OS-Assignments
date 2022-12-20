@@ -1,78 +1,71 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/mman.h>
+#include <sys/shm.h>
+#include <string.h>
 
-#define SHM_NAME "shmfile2" 
-#define SHM_SIZE 1024  
-#define STR_LEN 5
-
-int main() {
-
-    int shm_fd = shm_open(SHM_NAME, O_RDWR, 0666);
-    if (shm_fd < 0) {
-        perror("Error opening shared memory object");
-        exit(1);
-    }
-
-    char* shm_ptr = (char*) mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);
-    if (shm_ptr == MAP_FAILED) {
-        perror("Error mapping shared memory object");
-        exit(1);
-    }
-
-    int highest_id = -1;  // highest ID received
-    // while (1) {
-    //     // receive and print the group of strings
-    //     for (int i = 0; i < 5; i++) {
-    //         int id = *((int*) shm_ptr);
-    //         char str[STR_LEN + 1];
-    //         strcpy(str, shm_ptr + sizeof(int));
-    //         printf("Received string with ID %d: %s\n", id, str);
-    //         shm_ptr += sizeof(int) + STR_LEN + 1;  // +1 for null terminator
-    //         if (id > highest_id) highest_id = id;  // update the highest ID
-    //     }
-
-    //     // send the acknowledged ID back to P1
-    //     *((int*) shm_ptr) = highest_id;
-    //     shm_ptr = (char*) mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);  // reset the shared memory pointer
-    // }
-
-    while (true) 
+char buffer[12];
+int main()
+{
+    int i;
+    void *shared_memory;
+    char buff[100];
+    int shmid;
+    int shmid2;
+    void *shared_memory2;
+    int cur = 0;
+    while (1)
     {
-        char buffer[STRING_LEN];
-        int id;
-        while (read(shm_id, buffer, STRING_LEN) > 0) 
+        char c2[2];
+        shmid = shmget((key_t)7675, sizeof(char) * 12 * 5, 0666);
+        printf("Key of shared memory is %d\n", shmid);
+        shared_memory = shmat(shmid, NULL, 0); // process attached to shared memory segment
+        printf("Process attached at %p\n", shared_memory);
+        for (int i = cur; i < cur + 5; i++)
         {
-            sscanf(buffer, "%d %s", &id, buffer);
-            printf("Received string with ID %d: %s\n", id, buffer);
-            if (id > highest_id) 
-            {
-                highest_id = id;
-            }
-            id++;
+            strcpy(buffer, (char *)shared_memory + i * 12);
+            printf("Data read from shared memory is : %s\n", (char *)shared_memory + i * 12);
         }
-        return 0;
+        if (strlen(buffer) == 11)
+        {
+            shmid2 = shmget((key_t)1110, sizeof(char) * 12, 0666 | IPC_CREAT);
+            shared_memory2 = shmat(shmid2, NULL, 0);
+            char c[2] = "0";
+            strncat(c, &buffer[10], 1);
+            strcpy(shared_memory2, c);
+            strcpy(c2, c);
+            printf("buffer %s\n", buffer);
+            printf("p2 sent : %s\n", (char *)shared_memory2);
+        }
+        else
+        {
+            shmid2 = shmget((key_t)1110, sizeof(char) * 12, 0666 | IPC_CREAT);
+            shared_memory2 = shmat(shmid2, NULL, 0);
+            char c[2];
+            for (int i = 0; i < 2; i++)
+            {
+                if (strlen(buffer) == 2)
+                {
+                    c[0] = buffer[0];
+                    c[1] = buffer[1];
+                }
+                c[i] = buffer[strlen(buffer) - 4 + i];
+            }
+            strcpy(shared_memory2, c);
+            printf("buffer %s\n", buffer);
+            strcpy(c2, c);
+            printf("p2 sent : %s\n", (char *)shared_memory2);
+        }
+
+        cur = atoi(c2);
+        if (cur >= 49)
+            exit(EXIT_SUCCESS);
+
+        // strcpy(buffer, shared_memory);
+        // shmid2 = shmget((key_t)1110, 1024, 0666 | IPC_CREAT);
+        // shared_memory2 = shmat(shmid2, NULL, 0);
+        // cur = buffer[0];
+        // strcpy(shared_memory2, buffer);
+        // printf("p2 sent : %s\n", (char *)shared_memory2);
     }
-
-
-
-
-
-
-    // unmap the shared memory object from the process's address space
-    if (munmap(shm_ptr, SHM_SIZE) == -1) {
-        perror("Error unmapping shared memory object");
-        exit(1);
-    }
-
-    // close the shared memory object
-    if (close(shm_fd) == -1) {
-        perror("Error closing shared memory object");
-        exit(1);
-    }
-
-    return 0;
 }
