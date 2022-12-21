@@ -29,6 +29,7 @@ void *philosophersWorld(void *arg)
             printf("Philosopher %d picked up right fork.\n", id);
         }
 
+        if(forks[id]==1 && forks[(id+1)%f]==1)
         printf("Philosopher %d is eating.\n", id);
         sleep(1);
 
