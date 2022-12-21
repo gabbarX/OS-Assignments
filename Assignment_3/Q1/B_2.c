@@ -18,16 +18,25 @@ void *philosophersWorld(void *arg)
         printf("Philosopher %d is thinking.\n", id);
         sleep(1);
         
-        forks[id] = 1;
-        printf("Philosopher %d picked up left fork.\n", id);
-        
-        forks[(id + 1) % f] = 1;
-        printf("Philosopher %d picked up right fork.\n", id);
+        if(forks[id]==0)
+        {
+            forks[id] = 1;
+            printf("Philosopher %d picked up left fork.\n", id);
+        }
+        if(forks[(id + 1) % f]==0)
+        {
+            forks[(id + 1) % f] = 1;
+            printf("Philosopher %d picked up right fork.\n", id);
+        }
 
-        bowl[id%2] = 1;
-        printf("Philosopher %d is eating form bowl %d.\n", id, id%2);
+        if(bowl[id%2]==0 && forks[(id + 1) % f]==1 && forks[id]==1)
+        {
+            bowl[id%2] = 1;
+            printf("Philosopher %d is eating form bowl %d.\n", id, id%2);
+            sleep(1);
+        }
+
         bowl[id%2] = 0;
-        sleep(1);
 
         forks[id] = 0;
         forks[(id + 1) % f] = 0;
