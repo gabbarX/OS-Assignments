@@ -6,16 +6,17 @@
 #include <linux/sched.h>
 #include <linux/cred.h>
 
-MODULE_AUTHOR("Palaash Goel");
+MODULE_AUTHOR("Ankit Gautam");
 MODULE_LICENSE("GPL");
 
 static int pNum;
 static struct task_struct* pTask;
 static struct pid* pidStruct;
 
-module_param(pNum, int,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+module_param(pNum, int,  0);
 
-int init_module(void) {
+int init_module(void) 
+{
     if (!(pidStruct = find_get_pid(pNum))) {
         pr_info("NULL PID found. Terminating.\n");
         return 0;
@@ -27,26 +28,11 @@ int init_module(void) {
         return 0;
     }
 
-    pr_info("Process Name: %s\n", pTask -> comm);
-    pr_info("PID: %d\n", pTask -> pid);
-    pr_info("UID: %d\n", pTask -> cred -> uid);
-    pr_info("PGID: %d\n", pTask -> cred -> gid);
-    pr_info("Command Path: %s\n", pTask -> comm);
-    //Getting executable path
-    // char* path = malloc(1000);
-
-    // struct mm_struct* mm = pTask -> mm;
-
-    // if (mm != NULL) {
-    //     down_read(&mm->mmap_base);
-    //     if (mm->exe_file != NULL) 
-    //     {
-    //         strcpy(path, mm -> exe_file -> f_path -> d_name, 1000);           
-    //     }
-    //     up_read(&mm->mmap_base);
-    // } 
-
-    // printk(KERN_INFO "Command path: %s\n", path);
+    printk("Process Name: %s\n", pTask -> comm);
+    printk("PID: %d\n", pTask -> pid);
+    printk("UID: %d\n", pTask -> cred -> uid);
+    printk("PGID: %d\n", pTask -> cred -> gid);
+    printk("Command Path: %s\n", pTask -> comm);
     return 0;
 }
 
