@@ -1,41 +1,35 @@
-#include <linux/kernel.h>
+#include <linux/init.h>
 #include <linux/module.h>
-#include <linux/pid.h>
-#include <linux/pid_namespace.h>
-#include <linux/moduleparam.h>
+#include <linux/kernel.h>
+#include <linux/unistd.h>
+#include <linux/syscalls.h>
 #include <linux/sched.h>
-#include <linux/cred.h>
 
-MODULE_AUTHOR("Ankit Gautam");
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Ankit Gautam");
+MODULE_DESCRIPTION("Module");
+MODULE_VERSION("0.01");
 
-static int pNum;
-static struct task_struct* pTask;
-static struct pid* pidStruct;
+int pid = 0;
+module_param(pid, int, 0);
 
-module_param(pNum, int,  0);
-
-int init_module(void) 
+static int __init a3_init(void)
 {
-    if (!(pidStruct = find_get_pid(pNum))) {
-        pr_info("NULL PID found. Terminating.\n");
-        return 0;
+    struct task_struct *t1;
+    t1 = pid_task(find_vpid(pid), PIDTYPE_PID);
+    if (!t1)
+    {
+        return -ESRCH;
     }
-    
-
-    if (!(pTask = pid_task(pidStruct, PIDTYPE_PID))) {
-        pr_info("NULL task struct found. Terminating.\n");
-        return 0;
-    }
-
-    printk("Process Name: %s\n", pTask -> comm);
-    printk("PID: %d\n", pTask -> pid);
-    printk("UID: %d\n", pTask -> cred -> uid);
-    printk("PGID: %d\n", pTask -> cred -> gid);
-    printk("Command Path: %s\n", pTask -> comm);
+    printk(KERN_INFO "The pid is: %d\n", t1->pid);
+    printk(KERN_INFO "The uid is: %d\n", t1->cred->uid.val);
+    printk(KERN_INFO "The pgid is: %d\n", t1->group_leader->pid);
+    printk(KERN_INFO "The comm is: %s\n", t1->comm);
     return 0;
 }
-
-void cleanup_module(void) {
-    printk(KERN_INFO "Cleaning module has run.\n");
+static void __exit a3_exit(void)
+{
+    printk(KERN_INFO "Bye\n");
 }
+module_init(a3_init);
+module_exit(a3_exit);
