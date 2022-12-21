@@ -8,6 +8,9 @@
 #include <linux/audit.h>
 #include <linux/resource.h>
 #include <linux/blkdev.h>
+#include <linux/cred.h>
+// #include <module.h>
+#include <linux/moduleparam.h>
 #include <linux/task_io_accounting_ops.h>
 // #include <linux/syscalls.h>
 #include <linux/unistd.h>
@@ -16,28 +19,14 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Ankit Gautam");
 MODULE_DESCRIPTION("Custom kernel module");
 
-static unsigned long find_sys_call_table(void)
-{
-    unsigned long sctable;
-    unsigned long ptr;
 
-    sctable = NULL;
-    for (ptr = (unsigned long)ksys_close;
-         ptr < (unsigned long)&loops_per_jiffy; ptr += sizeof(void )) {
-        unsigned longp;
+static int pid;
 
-        p = (unsigned long *)ptr;
-        if (p[NR_close] == (unsigned long)sys_close) {
-            sctable = (unsigned long **)p;
-            return sctable;
-        }
-    }
+module_param(num,int,S_IRUSR | S_IRWSR | S_IRGRP| S_IROTH);
 
-    return NULL;
-}
 
-SYSCALL_DEFINE1(print_task_struct, pid_t, pid)
-{
+static int __init sys_call_init(void)
+{    
     struct task_struct *task;
 
     task = pid_task(find_vpid(pid), PIDTYPE_PID);
@@ -52,38 +41,9 @@ SYSCALL_DEFINE1(print_task_struct, pid_t, pid)
     return 0;
 }
 
-static int __init sys_call_init(void)
-{    
-    unsigned long cr0;
-    unsigned long sctable;
-
-    sctable = find_sys_call_table();
-    if (!sctable) {
-        printk(KERN_ERR "Syscall table not found\n");
-        return -EINVAL;
-    }
-
-    cr0 = read_cr0();
-    write_cr0(cr0 & ~0x00010000);
-    sctable[NR_print_task_struct] = print_task_struct;
-    write_cr0(cr0);
-
-    return 0;
-}
-
 static void __exit sys_call_exit(void)
 {
-    unsigned long cr0;
-    unsigned long sctable;
-
-    sctable = find_sys_call_table();
-    if (!sctable)
-        return;
-
-    cr0 = read_cr0();
-    write_cr0(cr0 & ~0x00010000);
-    sctable[NR_print_task_struct] = NULL;
-    write_cr0(cr0);
+    printk(KERN_INFO "Exiting module!\n");
 }
 
 module_init(sys_call_init);
