@@ -8,7 +8,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Ankit Gautam");
 MODULE_DESCRIPTION("Module");
-MODULE_VERSION("0.01");
+MODULE_VERSION("1");
 
 int pid = 0;
 module_param(pid, int, 0);
@@ -22,8 +22,8 @@ static int __init processIdGiverInit(void)
         return -ESRCH;
     }
     printk(KERN_INFO "The pid is: %d\n", task->pid);
-    printk(KERN_INFO "The uid is: %d\n", task->cred->uid.val);
-    printk(KERN_INFO "The pgid is: %d\n", task->group_leader->pid);
+    printk(KERN_INFO "The uid is: %d\n", __kuid_val(task->cred->uid));
+    printk(KERN_INFO "The pgid is: %d\n", pid_vnr(task_pgrp(task)));
     printk(KERN_INFO "The comm is: %s\n", task->comm);
     return 0;
 }
