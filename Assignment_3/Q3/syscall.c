@@ -1,50 +1,55 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/syscalls.h>
-#include <linux/sched.h>
-#include <linux/mutex.h>
-#include <linux/futex.h>
-#include <linux/pipe_fs_i.h>
-#include <linux/audit.h>
-#include <linux/resource.h>
-#include <linux/blkdev.h>
-#include <linux/cred.h>
-// #include <module.h>
+#include <linux/pid.h>
+#include <linux/pid_namespace.h>
 #include <linux/moduleparam.h>
-#include <linux/task_io_accounting_ops.h>
-// #include <linux/syscalls.h>
-#include <linux/unistd.h>
+#include <linux/sched.h>
+#include <linux/cred.h>
 
+MODULE_AUTHOR("Palaash Goel");
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Ankit Gautam");
-MODULE_DESCRIPTION("Custom kernel module");
 
+static int pNum;
+static struct task_struct* pTask;
+static struct pid* pidStruct;
 
-static int pid;
+module_param(pNum, int,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
-module_param(num,int,S_IRUSR | S_IRWSR | S_IRGRP| S_IROTH);
+int init_module(void) {
+    if (!(pidStruct = find_get_pid(pNum))) {
+        pr_info("NULL PID found. Terminating.\n");
+        return 0;
+    }
+    
 
+    if (!(pTask = pid_task(pidStruct, PIDTYPE_PID))) {
+        pr_info("NULL task struct found. Terminating.\n");
+        return 0;
+    }
 
-static int __init sys_call_init(void)
-{    
-    struct task_struct *task;
+    pr_info("Process Name: %s\n", pTask -> comm);
+    pr_info("PID: %d\n", pTask -> pid);
+    pr_info("UID: %d\n", pTask -> cred -> uid);
+    pr_info("PGID: %d\n", pTask -> cred -> gid);
+    pr_info("Command Path: %s\n", pTask -> comm);
+    //Getting executable path
+    // char* path = malloc(1000);
 
-    task = pid_task(find_vpid(pid), PIDTYPE_PID);
-    if (!task)
-        return -EINVAL;
+    // struct mm_struct* mm = pTask -> mm;
 
-    printk(KERN_INFO "pid: %d\n", task->pid);
-    printk(KERN_INFO "user id: %d\n", __kuid_val(task->cred->uid));
-    printk(KERN_INFO "process group id: %d\n", pid_vnr(task_pgrp(task)));
-    printk(KERN_INFO "command path: %s\n", task->comm);
+    // if (mm != NULL) {
+    //     down_read(&mm->mmap_base);
+    //     if (mm->exe_file != NULL) 
+    //     {
+    //         strcpy(path, mm -> exe_file -> f_path -> d_name, 1000);           
+    //     }
+    //     up_read(&mm->mmap_base);
+    // } 
 
+    // printk(KERN_INFO "Command path: %s\n", path);
     return 0;
 }
 
-static void __exit sys_call_exit(void)
-{
-    printk(KERN_INFO "Exiting module!\n");
+void cleanup_module(void) {
+    printk(KERN_INFO "Cleaning module has run.\n");
 }
-
-module_init(sys_call_init);
-module_exit(sys_call_exit);
