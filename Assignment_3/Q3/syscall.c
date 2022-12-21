@@ -13,23 +13,23 @@ MODULE_VERSION("0.01");
 int pid = 0;
 module_param(pid, int, 0);
 
-static int __init a3_init(void)
+static int __init processIdGiverInit(void)
 {
-    struct task_struct *t1;
-    t1 = pid_task(find_vpid(pid), PIDTYPE_PID);
-    if (!t1)
+    struct task_struct *task;
+    task = pid_task(find_vpid(pid), PIDTYPE_PID);
+    if (!task)
     {
         return -ESRCH;
     }
-    printk(KERN_INFO "The pid is: %d\n", t1->pid);
-    printk(KERN_INFO "The uid is: %d\n", t1->cred->uid.val);
-    printk(KERN_INFO "The pgid is: %d\n", t1->group_leader->pid);
-    printk(KERN_INFO "The comm is: %s\n", t1->comm);
+    printk(KERN_INFO "The pid is: %d\n", task->pid);
+    printk(KERN_INFO "The uid is: %d\n", task->cred->uid.val);
+    printk(KERN_INFO "The pgid is: %d\n", task->group_leader->pid);
+    printk(KERN_INFO "The comm is: %s\n", task->comm);
     return 0;
 }
-static void __exit a3_exit(void)
+static void __exit processIdGiverExit(void)
 {
-    printk(KERN_INFO "Bye\n");
+    printk(KERN_INFO "Module is Exiting\n");
 }
-module_init(a3_init);
-module_exit(a3_exit);
+module_init(processIdGiverInit);
+module_exit(processIdGiverExit);
